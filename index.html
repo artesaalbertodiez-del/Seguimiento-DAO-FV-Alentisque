@@ -87,11 +87,16 @@ label.field-label{display:block;font-size:12.5px;font-weight:700;color:var(--ink
 .fase-pill.on{background:var(--verde-osc);color:#fff;border-color:var(--verde-osc);}
 
 /* ---------- home list ---------- */
-.visita-item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:13px 14px;margin-bottom:10px;}
+.visita-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;}
+.visita-item{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer;}
+.visita-item .chev{color:var(--ink-muted);font-size:12px;flex:none;}
 .visita-num{width:42px;height:42px;border-radius:50%;background:var(--head-bg);color:var(--verde-osc);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none;}
 .visita-info{flex:1;min-width:0;}
 .visita-info .t1{font-weight:700;font-size:14.5px;}
 .visita-info .t2{font-size:12px;color:var(--ink-muted);margin-top:2px;}
+.visita-acciones{display:flex;gap:8px;padding:10px 14px 14px;border-top:1px dashed var(--line);}
+.btn-accion{flex:1;background:var(--head-bg);border:1px solid var(--line);border-radius:9px;padding:9px 6px;font-size:12px;font-weight:700;color:var(--ink);}
+.btn-accion-danger{background:var(--bad-bg);color:var(--bad-tx);border-color:var(--bad-bg);}
 .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10.5px;font-weight:700;letter-spacing:.02em;}
 .badge-draft{background:var(--na-bg);color:var(--na-tx);}
 .badge-synced{background:var(--good-bg);color:var(--good-tx);}
@@ -850,6 +855,7 @@ const STATE = {
   temaFlowOrder: [],   // números de tema aplicables, en orden, para el flujo de checklist
   temaFlowIdx: 0,
   expanded: {},         // codigo -> bool (expandido en checklist)
+  historialExpanded: {}, // id de ficha -> bool (acciones desplegadas en el Historial)
   syncing: false,
 };
 
@@ -983,6 +989,7 @@ function render(){
   if(STATE.view === "apartados") return renderApartados();
   if(STATE.view === "checklist") return renderChecklist();
   if(STATE.view === "revision") return renderRevision();
+  if(STATE.view === "previsualizar") return renderPrevisualizar();
 }
 
 function goto(view){ STATE.view = view; render(); }
@@ -992,6 +999,11 @@ function goto(view){ STATE.view = view; render(); }
 /* un único botón de contexto (⌂ Inicio en pantallas de menú, ← Menú en   */
 /* pantallas de contenido), más una flecha de paso opcional en el         */
 /* asistente de la ficha.                                                  */
+/* La navegación NUNCA guarda la ficha en el historial por sí sola — solo */
+/* se guarda cuando el usuario pulsa "Guardar borrador y salir", "Generar */
+/* Word" o "Sincronizar" en la Revisión final (o al confirmar Reabrir /   */
+/* Eliminar en el Historial). Así, crear o mirar una ficha sin querer no  */
+/* la deja guardada como borrador.                                        */
 /* ---------------------------------------------------------------------- */
 function cabeceraHtml(title, sub, opts={}){
   const accion = opts.mode === "inicio" ? `<button class="cab-btn" id="btn-cab-inicio">⌂ Inicio</button>`
@@ -1005,9 +1017,9 @@ function cabeceraHtml(title, sub, opts={}){
 }
 function wireCabecera(){
   const bi = $("#btn-cab-inicio");
-  if(bi) bi.addEventListener("click", () => { persistCurrent(); goto("inicio"); });
+  if(bi) bi.addEventListener("click", () => { goto("inicio"); });
   const bm = $("#btn-cab-menu");
-  if(bm) bm.addEventListener("click", () => { persistCurrent(); goto("menu-fichas"); });
+  if(bm) bm.addEventListener("click", () => { goto("menu-fichas"); });
 }
 
 /* ---------------------------------------------------------------------- */
@@ -1097,12 +1109,15 @@ function renderHistorial(){
   wireCabecera();
   $$(".visita-item").forEach(node => {
     node.addEventListener("click", () => {
-      const v = STATE.visitas.find(x => x.id === node.dataset.id);
-      if(!v) return;
-      STATE.current = v;
-      goto("datos");
+      const id = node.dataset.id;
+      STATE.historialExpanded[id] = !STATE.historialExpanded[id];
+      renderHistorial();
     });
   });
+  $$("[data-editar]").forEach(b => b.addEventListener("click", (ev) => { ev.stopPropagation(); editarFicha(b.dataset.editar); }));
+  $$("[data-reabrir]").forEach(b => b.addEventListener("click", (ev) => { ev.stopPropagation(); reabrirFicha(b.dataset.reabrir); }));
+  $$("[data-previsualizar]").forEach(b => b.addEventListener("click", (ev) => { ev.stopPropagation(); previsualizarFicha(b.dataset.previsualizar); }));
+  $$("[data-eliminar]").forEach(b => b.addEventListener("click", (ev) => { ev.stopPropagation(); eliminarFicha(b.dataset.eliminar); }));
 }
 
 function emptyStateHtml(){
@@ -1118,14 +1133,62 @@ function visitaRowHtml(v){
     : v.syncStatus === "error" ? '<span class="badge badge-error">ERROR SYNC</span>'
     : '<span class="badge badge-draft">BORRADOR</span>';
   const faseLabel = v.fase === "previa" ? "Fase previa a construcción" : "Fase de construcción";
-  return `<div class="visita-item" data-id="${v.id}">
-    <div class="visita-num">${String(v.nVisita).padStart(2,"0")}</div>
-    <div class="visita-info">
-      <div class="t1">${fmtFechaEs(v.fecha)} · ${escapeHtml(faseLabel)}</div>
-      <div class="t2">${c.apartados} apartados · ${c.cumple} cumplen · ${c.no_cumple} no conformidades ${c.pendiente ? "· "+c.pendiente+" pendientes" : ""}</div>
-      <div style="margin-top:6px;">${badge}</div>
+  const expanded = !!STATE.historialExpanded[v.id];
+  const esDraft = v.syncStatus !== "synced";
+  return `<div class="visita-card">
+    <div class="visita-item" data-id="${v.id}">
+      <div class="visita-num">${String(v.nVisita).padStart(2,"0")}</div>
+      <div class="visita-info">
+        <div class="t1">${fmtFechaEs(v.fecha)} · ${escapeHtml(faseLabel)}</div>
+        <div class="t2">${c.apartados} apartados · ${c.cumple} cumplen · ${c.no_cumple} no conformidades ${c.pendiente ? "· "+c.pendiente+" pendientes" : ""}</div>
+        <div style="margin-top:6px;">${badge}</div>
+      </div>
+      <div class="chev">${expanded ? "▲" : "▼"}</div>
+    </div>
+    <div class="visita-acciones ${expanded ? "" : "hidden"}">
+      ${esDraft
+        ? `<button class="btn-accion" data-editar="${v.id}">✏️ Editar</button>`
+        : `<button class="btn-accion" data-reabrir="${v.id}">🔓 Reabrir</button>`}
+      <button class="btn-accion" data-previsualizar="${v.id}">👁 Previsualizar</button>
+      <button class="btn-accion btn-accion-danger" data-eliminar="${v.id}">🗑 Eliminar</button>
     </div>
   </div>`;
+}
+
+// Ficha aún en borrador: se abre directamente para seguir editándola.
+function editarFicha(id){
+  const v = STATE.visitas.find(x => x.id === id);
+  if(!v) return;
+  STATE.current = v;
+  goto("datos");
+}
+
+// Ficha ya sincronizada: reabrirla la vuelve a marcar como borrador hasta
+// que se sincronice de nuevo, así que se pide confirmación.
+function reabrirFicha(id){
+  const v = STATE.visitas.find(x => x.id === id);
+  if(!v) return;
+  if(!confirm("¿Reabrir esta ficha para editarla? Se volverá a marcar como borrador hasta que la sincronices de nuevo.")) return;
+  v.syncStatus = "draft";
+  saveVisitas();
+  STATE.current = v;
+  goto("datos");
+}
+
+function previsualizarFicha(id){
+  const v = STATE.visitas.find(x => x.id === id);
+  if(!v) return;
+  STATE.current = v;
+  goto("previsualizar");
+}
+
+function eliminarFicha(id){
+  if(!confirm("¿Eliminar esta ficha permanentemente? Esta acción no se puede deshacer.")) return;
+  STATE.visitas = STATE.visitas.filter(x => x.id !== id);
+  saveVisitas();
+  delete STATE.historialExpanded[id];
+  toast("Ficha eliminada.");
+  renderHistorial();
 }
 
 /* ---------------------------------------------------------------------- */
@@ -1234,8 +1297,8 @@ function renderDatos(){
   }));
   $("#btn-continuar").addEventListener("click", () => {
     if(!v.tecnico.trim()){ toast("Indica el nombre del técnico DAO."); return; }
+    if(!v.condiciones.trim()){ toast("Indica las condiciones de la visita."); return; }
     const profile = loadProfile(); profile.tecnico = v.tecnico.trim(); saveProfile(profile);
-    persistCurrent();
     goto("apartados");
   });
 }
@@ -1271,7 +1334,7 @@ function renderApartados(){
     </div>
   `;
   wireCabecera();
-  $("#btn-back").addEventListener("click", () => { persistCurrent(); goto("datos"); });
+  $("#btn-back").addEventListener("click", () => { goto("datos"); });
   $$("#temas-list input[type=checkbox]").forEach(cb => {
     cb.addEventListener("change", () => {
       const num = Number(cb.dataset.num);
@@ -1286,7 +1349,6 @@ function renderApartados(){
     nums.forEach(n => ensureDetalle(v, n));
     STATE.temaFlowOrder = nums;
     STATE.temaFlowIdx = 0;
-    persistCurrent();
     goto("checklist");
   });
 }
@@ -1317,14 +1379,12 @@ function renderChecklist(){
   `;
 
   wireCabecera();
-  $("#btn-back").addEventListener("click", () => { persistCurrent(); goto("apartados"); });
+  $("#btn-back").addEventListener("click", () => { goto("apartados"); });
   $("#btn-prev").addEventListener("click", () => {
-    persistCurrent();
     if(STATE.temaFlowIdx>0){ STATE.temaFlowIdx--; goto("checklist"); }
     else goto("apartados");
   });
   $("#btn-next").addEventListener("click", () => {
-    persistCurrent();
     if(isLast){ goto("revision"); }
     else { STATE.temaFlowIdx++; goto("checklist"); }
   });
@@ -1495,7 +1555,7 @@ function renderRevision(){
     </div>
   `;
   wireCabecera();
-  $("#btn-back").addEventListener("click", () => { persistCurrent(); STATE.temaFlowIdx = STATE.temaFlowOrder.length-1; goto("checklist"); });
+  $("#btn-back").addEventListener("click", () => { STATE.temaFlowIdx = STATE.temaFlowOrder.length-1; goto("checklist"); });
   $("#f-obsg").addEventListener("input", e => v.obsGenerales = e.target.value);
   $("#f-firma-tecnico").addEventListener("input", e => v.firmaTecnico = e.target.value);
   $("#f-firma-contratista").addEventListener("input", e => v.firmaContratista = e.target.value);
@@ -1513,6 +1573,68 @@ function renderRevision(){
     if(!STATE.user){ await googleSignIn(); if(!STATE.user) return; }
     syncVisita(v);
   });
+}
+
+/* ---------------------------------------------------------------------- */
+/* Vista: Previsualización (solo lectura) — se abre desde el Historial     */
+/* sin editar ni guardar nada.                                             */
+/* ---------------------------------------------------------------------- */
+function renderPrevisualizar(){
+  const v = STATE.current;
+  const c = countCountsForVisita(v);
+  const faseLabel = v.fase === "previa" ? "Fase previa a construcción" : "Fase de construcción";
+  const nums = temasAplicables(v);
+  el.innerHTML = `
+    ${cabeceraHtml("Previsualización", `Ficha n.º ${String(v.nVisita).padStart(2,"0")} · ${fmtFechaEs(v.fecha)}`, {mode:"menu"})}
+    <div class="container">
+      <div class="card">
+        <div class="field-label">Datos generales</div>
+        <p class="small" style="margin:8px 0 0;"><strong>Técnico DAO:</strong> ${escapeHtml(v.tecnico||"—")}</p>
+        <p class="small" style="margin:6px 0 0;"><strong>Fase:</strong> ${escapeHtml(faseLabel)}</p>
+        <p class="small" style="margin:6px 0 0;"><strong>Condiciones de la visita:</strong> ${escapeHtml(v.condiciones||"—")}</p>
+      </div>
+
+      <div class="stats-row">
+        <div class="s"><div class="n">${c.apartados}</div><div class="l">apartados</div></div>
+        <div class="s"><div class="n" style="color:var(--good-tx)">${c.cumple}</div><div class="l">cumplen</div></div>
+        <div class="s"><div class="n" style="color:var(--bad-tx)">${c.no_cumple}</div><div class="l">no conformidades</div></div>
+        <div class="s"><div class="n" style="color:var(--na-tx)">${c.na}</div><div class="l">no aplican</div></div>
+      </div>
+
+      ${nums.map(num => {
+        const temaData = TEMAS_DATA.find(t=>t.num===num);
+        const items = v.detalle[num] || [];
+        return `<div class="section-title">${num}. ${escapeHtml(temaData.nombre)}</div>`
+          + (items.length ? items.map(it => previewItemHtml(it)).join("") : `<div class="card muted center">Sin medidas específicas en esta fase.</div>`);
+      }).join("")}
+
+      <div class="section-title">Observaciones generales de la visita</div>
+      <div class="card"><p class="small">${escapeHtml(v.obsGenerales||"—")}</p></div>
+    </div>
+  `;
+  wireCabecera();
+}
+
+function previewItemHtml(it){
+  const b = estadoBadgeUi(it.estado);
+  return `<div class="item-row st-${it.estado}">
+    <div class="item-head" style="cursor:default;">
+      <div class="cod">${it.codigo}</div>
+      <div class="res">${escapeHtml(it.resumen)}</div>
+      <div class="chev" style="background:${b.bg};color:${b.tx};padding:3px 8px;border-radius:20px;font-size:10.5px;font-weight:700;white-space:nowrap;">${b.label}</div>
+    </div>
+    <div class="item-body">
+      <div class="full-text" style="margin-top:10px;">${it.obs ? escapeHtml(it.obs) : '<span class="muted">Sin observaciones.</span>'}</div>
+      ${it.correctora ? `<div class="item-meta" style="color:var(--bad-tx);margin-top:6px;"><strong>Medida correctora:</strong> ${escapeHtml(it.correctora)}</div>` : ""}
+      ${(it.fotos||[]).length ? `<div class="photos-row">${it.fotos.map(f=>`<div class="photo-thumb"><img src="${f.dataUrl}"></div>`).join("")}</div>` : ""}
+    </div>
+  </div>`;
+}
+function estadoBadgeUi(estado){
+  if(estado==="cumple") return {label:"CUMPLE", bg:"var(--good-bg)", tx:"var(--good-tx)"};
+  if(estado==="no_cumple") return {label:"NO CUMPLE", bg:"var(--bad-bg)", tx:"var(--bad-tx)"};
+  if(estado==="na") return {label:"N/A", bg:"var(--na-bg)", tx:"var(--na-tx)"};
+  return {label:"PENDIENTE", bg:"var(--head-bg)", tx:"var(--ink-muted)"};
 }
 
 /* ---------------------------------------------------------------------- */
