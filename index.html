@@ -32,11 +32,24 @@ input,textarea,select{font-family:inherit;font-size:16px;}
 .topbar h1{font-size:16px;margin:0;font-weight:700;flex:1;}
 .topbar .sub{font-size:11.5px;opacity:.85;display:block;font-weight:400;margin-top:2px;}
 .topbar .action{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:8px;padding:6px 10px;font-size:13px;}
+.topbar .cab-btn{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:20px;padding:7px 12px;font-size:12.5px;font-weight:700;flex:none;white-space:nowrap;}
 
 .brandbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 6px;}
 .brandbar img{height:30px;display:block;}
 .brandbar .name{font-weight:700;color:var(--verde-osc);font-size:15px;}
-.pill-btn{background:var(--head-bg);color:var(--verde-osc);border:1.5px solid var(--line);border-radius:20px;padding:7px 13px;font-size:12.5px;font-weight:700;}
+
+/* ---------- pantalla Inicio ---------- */
+.inicio-logo{text-align:center;padding:6px 0 22px;}
+.inicio-logo img{height:44px;display:block;margin:0 auto 8px;}
+
+/* ---------- menús (Inicio / menú de módulo) ---------- */
+.menu-section-title{font-size:12.5px;font-weight:800;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.03em;margin:20px 0 8px;}
+.menu-section-title:first-of-type{margin-top:0;}
+.menu-btn{display:flex;align-items:center;gap:13px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:10px;text-align:left;}
+.menu-btn-ico{width:42px;height:42px;border-radius:11px;background:var(--head-bg);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;}
+.menu-btn-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.menu-btn-txt strong{font-size:14.5px;color:var(--ink);}
+.menu-btn-txt span{font-size:12px;color:var(--ink-muted);}
 
 /* ---------- generic ---------- */
 .container{padding:14px 16px 100px;}
@@ -155,7 +168,6 @@ hr.sep{border:none;border-top:1px solid var(--line);margin:16px 0;}
 </head>
 <body>
 <div id="app"><div class="login-wrap"><p class="muted">Cargando…</p></div></div>
-
 <script src="https://accounts.google.com/gsi/client"></script>
 <script src="https://cdn.jsdelivr.net/npm/docx@9.6.1/dist/index.iife.js"></script>
 
@@ -173,17 +185,19 @@ hr.sep{border:none;border-top:1px solid var(--line);margin:16px 0;}
 const CONFIG = {
   GOOGLE_CLIENT_ID: "367256652135-asmosgmulfi8uog242b8shbivubehiei.apps.googleusercontent.com",
 
-  // Hoja de cálculo y carpeta de Drive creadas para este seguimiento
+  // Hoja de cálculo y carpetas de Drive creadas para este seguimiento
   // (ya creadas en tu Google Drive — no hace falta tocarlas):
   SHEET_ID: "19lQaQKAt0pkyduu2oQoCPd7cTMNYqTmbks9LdW02hKQ",
-  DRIVE_FOLDER_ID: "1u5DaJozkhwrI_c3si7Pwhjuj7V41R0OY",
+  DRIVE_FOLDER_ID: "1u5DaJozkhwrI_c3si7Pwhjuj7V41R0OY",   // carpeta principal (contiene las dos de abajo)
+  FOTOS_FOLDER_ID: "1jUKSqr_N89rbs2U6xCgbBI0Nt9uneGAh",     // fotos de campo
+  ACTAS_FOLDER_ID: "1sg7PDy0AGHN5usk8Ylan7Q_NDsOxWqgV",     // actas de visita en Word
 
   SCOPES: "https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file",
 
   // Datos fijos del proyecto (aparecen en todas las fichas y en el Word)
-  PROMOTOR: "PARQUE EÓLICO ALENTISQUE S.L.",
+  PROMOTOR: "Parque Eólico Alentisque S.L.",
   PROYECTO: "Planta Fotovoltaica FV Alentisque (50 MWp) — T.M. Alentisque, Soria",
-  ENTIDAD: "ARTESA Consultoría Ambiental — Dirección Ambiental de Obra (DAO)",
+  ENTIDAD: "ARTESA estudios ambientales S.L. — Dirección Ambiental de Obra (DAO)",
   ENCABEZADO_DOC: "DAO · FV Alentisque 50 MWp",
   PIE_DOC: "Artesa estudios ambientales S.L. — Documento de control interno DAO",
 
@@ -199,13 +213,14 @@ const LOGO_ENGIE_B64 = "/9j/4AAQSkZJRgABAQEA3ADcAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEB
 
 </script>
 <script>
-const TEMAS_DATA = [{"num": 1, "nombre": "OCUPACIÓN DEL TERRITORIO", "items": [{"codigo": "1.1", "resumen": "Zonas de valor natural y hábitats prioritarios señalizadas", "texto": "Se señalizarán las zonas con valor natural, fundamentalmente las zonas de cruce de los arroyos y cauces de agua. Se delimitarán y señalizarán las zonas con hábitat catalogados como prioritarios que se encuentren en el área de ocupación de la obra y en el radio de acción de la maquinaria, para evitar en lo posible afecciones sobre los mismos.", "tipo": "MP", "frecuencia": "Semanal y al final de la obra. Al finalizar la obra, determinación de las zonas que se deben dejar desocupadas.", "origen": "EsIA", "fase": "ambas", "faseOriginal": "Previo a Construcción y Construcción"}, {"codigo": "1.2", "resumen": "Zona de obras, paso de maquinaria y acopios jalonados", "texto": "Se jalonará la zona de obras, zona de paso de maquinaria, zonas de acopio e instalaciones auxiliares, para así minimizar el posible daño a la vegetación colindante, la compactación de suelos y garantizar la protección de la fauna sensible.", "tipo": "MP", "frecuencia": "Semanal y al final de la obra. Al finalizar la obra, determinación de las zonas que se deben dejar desocupadas.", "origen": "EsIA", "fase": "ambas", "faseOriginal": "Previo a Construcción y Construcción"}, {"codigo": "1.3", "resumen": "Zonas auxiliares fuera de vegetación natural y cauces", "texto": "Las ubicaciones de las zonas auxiliares de obra (parque de maquinaria, punto limpio, zonas de acopio, etc.) evitarán las zonas con vegetación natural y las cercanías de los cauces de agua.", "tipo": "MP", "frecuencia": "Semanal y al final de la obra. Al finalizar la obra, determinación de las zonas que se deben dejar desocupadas.", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "1.4", "resumen": "Ocupación limitada a zonas autorizadas (camino, estructuras, CT)", "texto": "La explanación del camino, las zonas donde se ubicarán las estructuras y las plataformas de los centros de transformación constituyen las únicas zonas del terreno que pueden ser ocupadas, debiendo permanecer el resto del territorio, en lo posible, en su estado natural, por lo que no podrá ser usado, bajo ningún concepto, para circular o estacionar vehículos, o para acopiar materiales.", "tipo": "MP", "frecuencia": "Semanal y al final de la obra. Al finalizar la obra, determinación de las zonas que se deben dejar desocupadas.", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "1.5", "resumen": "Cabeceras de barrancos y cauces sin ocupar ni interrumpir", "texto": "No se ocuparán cabeceras de barrancos ni se interrumpirán los cauces naturales o artificiales de agua.", "tipo": "MP", "frecuencia": "Inspección visual semanal en cauces", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "1.6.1", "resumen": "Vallado perimetral ejecutado según proyecto (distancias, puertas, malla)", "texto": "1.6) VALLADO: El cerramiento perimetral exterior se realizará respetando las directrices recomendadas por el ayuntamiento de Alentisque, colocando éste a una distancia mínima respecto de los caminos y parcelas colindantes y respetando el resto de servidumbres marcadas por ley respecto de carreteras, cauces, restos arqueológicos, etc. Se preverá una puerta para el acceso de vehículos y de personal en cada uno de los accesos. La puerta de acceso a la planta fotovoltaica será de doble hoja abatible, con marco metálico, disponiendo de cerradura con resbalón, manilla, condena y bombín. La anchura de dicho portón será de 5 metros. El vallado perimetral de la planta se realizará con valla cinegética con una luz de malla de al menos 15 cm. Se realizarán aperturas a ras de suelo en forma de rectángulos de 30 cm en sentido horizontal y 20 cm en sentido vertical enmarcado por listones de hacer corrugado cada 200 metros Se realizará de tal forma que no impida el tránsito de la fauna silvestre. No se enterrará el mallado para permitir el paso de pequeños vertebrados. Se evitará la cementación de bloque de hormigón en la parte inferior de la malla para permitir a ciertos mamíferos excavar pasos que comuniquen el exterior con el interior. Se prohíbe expresamente la incorporación de materiales o soluciones potencialmente peligrosas como vidrios, espinos, filos y puntas. El vallado se señalizará con elementos de alta visibilidad, prioritariamente naturales, para evitar la colisión de las aves. Dispondrá en todo su trazado de señales reflectantes intercaladas en la malla cada 10 metros para así disminuir la posibilidad de impactos de la avifauna.", "tipo": "MP", "frecuencia": "Semanal durante la construcción del vallado", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "1.6.2", "resumen": "Vallado no interrumpe cursos de agua ni favorece erosión", "texto": "1.6) VALLADO: No interrumpirá los cursos naturales de agua ni favorecerá la erosión ni el arrastre de tierras.", "tipo": "MP", "frecuencia": "Semanal durante la construcción del vallado y al final de la obra.", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "1.7", "resumen": "Uso prioritario de caminos existentes; nuevos trazados según ficha técnica", "texto": "Maximizar la utilización de los caminos existentes en la zona, definiendo nuevos trazados únicamente en los casos imprescindibles de forma que se respete la rasante del terreno natural. Adecuación de los caminos existentes que no alcancen los mínimos necesarios. Características de los viales que se ejecutarán: • La anchura mínima necesaria es de 5 m en los viales. • Los viales de nueva construcción requerirán en cada caso excavación o relleno de terraplén y relleno de zahorras con espesor mínimo de 25 cm. Será necesario disponer de cunetas y pasos de agua para la evacuación del agua de lluvia a ambos lados del camino. En todo caso se buscará preservar el discurso de las aguas de escorrentía por sus cursos naturales. • El radio del eje de curvatura requerido es de 10 m; en casos excepcionales se estudiará la posibilidad de realizar sobreanchos. • Pendiente máxima del 9% para viales y del 14% en caso de viales asfaltados. • Los terraplenes se realizarán 3/2 y los desmontes 1/2 como mínimo. • La construcción de los nuevos caminos, o la mejora de los existentes, debe ir acompañada de un sistema de drenaje longitudinal y transversal adecuado, que permita la evacuación del agua de la calzada y la procedente de las laderas contiguas. • El drenaje transversal se soluciona con el bombeo de un 1% de la calzada, evacuando así las aguas lateralmente.", "tipo": "MP", "frecuencia": "Semanal y al final de la obra. Al finalizar la obra, determinación de las zonas que se deben dejar desocupadas.", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "1.8", "resumen": "Zonas de acopio liberadas restauradas a cultivo o vegetación autóctona", "texto": "Las zonas temporales de acopios y que posteriormente queden libres deberán restablecerse para cultivos o bien especies autóctonas.", "tipo": "MC", "frecuencia": "Semanal durante el Plan de restauración", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción"}]}, {"num": 2, "nombre": "CONTROL DE EMISIONES ATMOSFÉRICAS, RUIDO Y CONTAMINACIÓN LUMÍNICA", "items": [{"codigo": "2.1", "resumen": "Maquinaria con ITV en vigor y emisiones dentro de norma", "texto": "La maquinaria deberá cumplir con los requisitos en cuanto a inspecciones técnicas (ITV), de manera que se certifique que los procesos de combustión de carburantes son correctos y se hallan dentro de la legislación en cuanto a emisión para CO, C, NOx, hidrocarburos.", "tipo": "MP/MS", "frecuencia": "Semanal y al final de la obra. Al finalizar la obra, determinación de las zonas que se deben dejar desocupadas.", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "2.2", "resumen": "Acopios pulverulentos protegidos del viento o regados", "texto": "Evitar el almacenamiento de materiales en lugares que no se encuentren al abrigo del viento, o riego de los acopios pulverulentos y caminos de acceso utilizados por la maquinaria.", "tipo": "MP", "frecuencia": "Semanal y al final de la obra.", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "2.3", "resumen": "Materiales pulverulentos transportados en camiones con lona", "texto": "Traslado de los materiales pulverulentos en camiones cubiertos con lonas.", "tipo": "MP", "frecuencia": "Semanal y al final de la obra.", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "3.1", "resumen": "Obras ejecutadas en el menor tiempo posible (molestias a población)", "texto": "Con el fin de minimizar las molestias a la población, las obras se realizarán en el menor tiempo posible.", "tipo": "MP", "frecuencia": "Semanal y al final de la obra.", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "3.2", "resumen": "Mediciones periódicas de ruido dentro de límites legales", "texto": "Se realizarán mediciones periódicas de ruido para comprobar que los niveles sonoros generados durante las labores de mantenimiento de la planta solar se encuentran dentro de los límites establecidos por la ley.", "tipo": "MC", "frecuencia": "Al inicio de las obras, a mitad del desarrollo de la obra y a fin de obra", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "4.1", "resumen": "Iluminación nocturna minimizada; luminarias adecuadas (>440 nm, hacia el suelo)", "texto": "Se evitará la iluminación de la planta siempre que sea posible, limitando la iluminación nocturna al mínimo y utilizando lámparas que emitan luz con longitudes de onda superiores a 440 nm. Los puntos de luz nunca serán de tipo globo y se procurará que el tipo empleado no disperse el haz luminoso, que verá enfocarse hacia abajo. (Inf. IDAA: Se evitará la iluminación nocturna de la planta fotovoltaica, así como los trabajos nocturnos durante la construcción, con las únicas excepciones de sistemas requeridos por la normativa y de dispositivos de iluminación imprescindibles en las edificaciones auxiliares o para hacer frente a situaciones de riesgo. En tal caso, se utilizarán luminarias que no emitan luz blanca rica en longitudes de onda corta (azules y UV), la iluminación se proyectará hacia el suelo por debajo del plano horizontal, y se limitará a lo estrictamente necesario).", "tipo": "MP", "frecuencia": "Semanal y al final de la obra durante la fase de construcción A determinar durante la fase de funcionamiento", "origen": "EsIA   \n IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}]}, {"num": 3, "nombre": "GEOMORFOLOGÍA, EROSIÓN Y SUELOS", "items": [{"codigo": "5.1", "resumen": "Trazado de pistas optimizado para reducir movimiento de tierras", "texto": "Se intentará optimizar el trazado de las pistas de servicio de manera que se reduzca el volumen de tierras a mover.", "tipo": "MP", "frecuencia": "Semanal y al final de la obra.", "origen": "EsIA", "fase": "previa", "faseOriginal": "Previo a Construcción"}, {"codigo": "5.2", "resumen": "Gestión y transporte de materiales planificado, sin plataformas extra", "texto": "Se establecerá una planificación correcta y pensada en la gestión y transporte de materiales de construcción y piezas de la planta, así como una buena gestión en el transporte y almacenamiento de los mismos, que evitará la construcción de plataformas adicionales dedicadas al almacenamiento de los mismos.", "tipo": "MP", "frecuencia": "Semanal y al final de la obra.", "origen": "EsIA", "fase": "previa", "faseOriginal": "Previo a Construcción"}, {"codigo": "5.3", "resumen": "Tierra vegetal separada de la extraída en profundidad", "texto": "Durante los movimientos de tierra se ha de separar adecuadamente la tierra vegetal procedente del nivel superficial de la extraída en profundidad con mayor porcentaje de rocas, para la posterior reposición de la cubierta vegetal deteriorada.", "tipo": "MC", "frecuencia": "Antes del inicio de la obra y cada vez que se deba delimitar una zona de acopio. Supervisión visual semanal", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "5.4", "resumen": "Procedimiento constructivo minimiza alteración del suelo y escorrentía", "texto": "Durante las obras, se seleccionará el procedimiento de construcción que minimice la alteración de la capa superficial del suelo, respetando la vegetación existente, minimizando los movimientos de tierra en la superficie de la planta, así como los acopios de cualquier tipo de material y zonas auxiliares deberán disponerse dentro del perímetro del proyecto, fuera de las áreas naturales a conservar y evitando la evacuación de solidos por escorrentía superficial.", "tipo": "MC", "frecuencia": "Semanal", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "5.5", "resumen": "Paneles instalados mediante hincado; vegetación bajo paneles preservada", "texto": "La instalación de los paneles debe de realizarse mediante hincado, ocupando la mínima superficie de suelo posible. Respecto a la vegetación del sustrato bajo los paneles solares, deberán permitir el desarrollo de vegetación herbácea y arbustiva dejando una distancia al suelo de al menos 0,5 m que favorezca su presencia sin que esta interfiera con el correcto funcionamiento de la planta ni al mantenimiento o seguimiento de la misma.", "tipo": "MC", "frecuencia": "Semanal", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "5.6", "resumen": "Superficies compactadas descompactadas al finalizar obra", "texto": "Una vez terminadas las labores de construcción, se deberán descompactar las superficies de terreno ocupadas de forma continuada durante la construcción del proyecto, siempre y cuando no constituyan un acceso al mismo. La descompactación se realizará mediante la roturación de la zona afectada y la posterior nivelación.", "tipo": "MC", "frecuencia": "Al final de la obra", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "5.7", "resumen": "Residuos y materiales de obra retirados al finalizar", "texto": "Una vez terminadas las labores de construcción, eliminación de los residuos y materiales generados durante las obras, retirada inmediata de materiales acumulados, más aún si supusiera un impedimento, obstáculo o peligro para el tránsito de peatones o vehículos, así como la adecuada actuación en caso de vertidos accidentales y restitución del estado original del terreno previo a la actuación.", "tipo": "MC", "frecuencia": "Al final de la obra", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "5.8", "resumen": "Caminos utilizados restituidos a su estado original", "texto": "Una vez terminadas las labores de construcción, restitución del estado original de caminos que hubiera sido necesario utilizar en la fase de construcción y hubiesen resultado alterados o dañados. Se rehabilitarán los daños efectuados a las propiedades durante la construcción o bien se efectuará una compensación económica por los mismos.", "tipo": "MC", "frecuencia": "Al final de la obra", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "5.9", "resumen": "Zonas auxiliares (parque maquinaria, viales, etc.) restauradas", "texto": "Una vez terminadas las labores de construcción, restauración de zonas afectadas (parque de maquinaria, viario de acceso a las obras, instalaciones auxiliares, etc.): eliminación adecuada de cualquier vertido accidental, una vez hayan finalizado todos los trabajos asociados a la construcción de las diferentes infraestructuras, restituyendo la forma y aspectos originales del terreno.", "tipo": "MC", "frecuencia": "Al final de la obra", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "5.10", "resumen": "Derrames accidentales retirados y almacenados en recipientes homologados", "texto": "Para evitar la contaminación de suelos, en caso de producirse derrames accidentales, deberán retirarse en el momento de su vertido y acumularse en recipientes homologados hasta su retirada por empresa autorizada.", "tipo": "MC", "frecuencia": "Semanal en fase de construcción Quincenal en fase de funcionamiento", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "5.11", "resumen": "Uso de caminos preexistentes; sin caminos viciados nuevos", "texto": "Se evitará al máximo la creación de caminos viciados utilizando cuando sea posible los caminos preexistentes.", "tipo": "MP", "frecuencia": "Semanal en fase de construcción Quincenal en fase de funcionamiento", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "5.12", "resumen": "Cambios de aceite controlados, sin vertidos, gestor autorizado", "texto": "Los cambios de aceite de la maquinaria utilizada en la construcción de la planta se realizarán con especial precaución evitando posibles vertidos, recogiéndose en bidones y depósitos destinados a tal fin, haciéndolos llegar a un gestor de residuos autorizado.", "tipo": "MP", "frecuencia": "Semanal en fase de construcción Quincenal en fase de funcionamiento", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}]}, {"num": 4, "nombre": "CALIDAD DE AGUAS SUPERFICIALES", "items": [{"codigo": "6.1", "resumen": "Dinámica hídrica y calidad de aguas superficiales preservada", "texto": "Deberán garantizar la no alteración significativa de la dinámica hídrica de la zona y asegurar en todo momento la calidad de las aguas superficiales y subterráneas, garantizando el drenaje de las aguas superficiales, manteniendo los márgenes limpios, no afectando a la vegetación de la ribera, disponiendo de sistemas eficiente para la recogida y evacuación de la zona de lluvia.", "tipo": "MP", "frecuencia": "Inspección visual semanal en cauces", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "6.2", "resumen": "Retención de sólidos antes de evacuar escorrentía; acopios sin riesgo de vertido", "texto": "Durante los movimientos de tierras, se deberán establecer las medidas necesarias para la retención de sólidos previa a la evacuación de las aguas de escorrentía superficial, así como otras posibles medidas para reducir al mínimo el riesgo de contaminación de las aguas superficiales. Cualquier acopio de materiales se ubicará de manera que se impida cualquier riesgo de vertido, ya sea directo o indirecto; por escorrentía, erosión, infiltración u otros mecanismos sobre las aguas superficiales o subterráneas.", "tipo": "MP", "frecuencia": "Al comienzo y al final de movimientos de tierras. Inspección visual semanal en cauces", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "6.3", "resumen": "Respeto de la servidumbre de 5 m del DPH; sin instalaciones en Zona de Flujo Preferente", "texto": "Se deberá realizar el proyecto respetando el dominio público hidráulico y su zona de servidumbre 5 metros de anchura de los cauces públicos, según establece el artículo 6 del Real Decreto Legislativo 1/2001, no colocando ningún tipo de instalación (como módulos fotovoltaicos y líneas eléctricas) en la Zona de Flujo Preferente que puedan suponer un obstáculo a los cauces, permanentes y temporales, presentes en la zona del proyecto. Los cerramientos y vallados que se implanten en la zona de flujo preferente, deben ser en todo caso permeables. No se debe poner en riesgo la capacidad de desagüe por modificaciones de terreno en estas zonas y se debe evitar el acopio en la Zona de flujo preferente de materiales que puedan ser arrastrados o puedan degradar el DPH, así como evitar el almacenamiento de residuos de todo tipo. En cualquier caso, se deberá consultar al organismo de cuenca correspondiente en relación a las posibles afecciones que se produzcan sobre dominio público hidráulico, así como las medidas preventivas y correctoras a adoptar.", "tipo": "MP", "frecuencia": "Semanal", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "6.4", "resumen": "Materiales sobrantes y residuos retirados al finalizar obra", "texto": "Una vez terminadas las labores de construcción, eliminación adecuada de los materiales sobrantes en las obras y de cualquier residuo almacenado. Si se produce algún vertido accidental durante la construcción se retirará y será depositado en vertedero autorizado.", "tipo": "MC", "frecuencia": "Semanal", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "6.5", "resumen": "Sin cambios de aceite ni combustible cerca del medio hídrico", "texto": "Prohibición expresa de cambios de aceite o almacenamiento de combustibles próximo al medio hídrico y realizándolos en lugares autorizados.", "tipo": "MP", "frecuencia": "Semanal en fase de construcción Quincenal en fase de funcionamiento", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "6.6", "resumen": "Cauces balizados en la zona de trabajo", "texto": "Se balizarán todos los cauces de la zona de trabajo para evitar su afección.", "tipo": "MP", "frecuencia": "Semanal en fase de construcción Quincenal en fase de funcionamiento", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "6.7", "resumen": "Sin vertidos contaminantes en el entorno", "texto": "Se vigilará y controlará la no realización de vertidos contaminantes en el entorno afectado.", "tipo": "MP", "frecuencia": "Semanal en fase de construcción Quincenal en fase de funcionamiento", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "6.8", "resumen": "Sin instalaciones para personas dentro del DPH", "texto": "En ningún caso se autorizarán dentro del DPH la construcción montaje o ubicación de instalaciones destinadas albergar personas, aunque sea con carácter provisional o temporal, de acuerdo con lo establecido en el artículo 77 del Reglamento de DPH.", "tipo": "MP", "frecuencia": "Semanal en fase de construcción Cada dos meses en fase de funcionamiento", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "6.9", "resumen": "Autorización de Confederación Hidrográfica para actuaciones en DPH", "texto": "Será necesario la autorización para actuaciones en el Dominio Público Hidráulico por parte de Confederación Hidrográfica del Duero y del Ebro en cada caso.", "tipo": "MP", "frecuencia": "Al inicio de la obra", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "6.10", "resumen": "Autorización de Confederación para actuaciones en zona de policía de cauces", "texto": "Se ha de considerar que toda actuación que realice en la zona de policía de cualquier cauce público deberá contar con la preceptiva autorización de la Confederación, según establece la vigente legislación de aguas, y en particular las actividades mencionadas en el artículo 9 del Reglamento del DPH.", "tipo": "MP", "frecuencia": "Al inicio de la obra", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "6.11", "resumen": "Autorización para captaciones de agua del DPH", "texto": "En caso de realización de captaciones de aguas directamente del DPH o de cualquier otra actividad se deberá disponer de la correspondiente autorización, cuyo otorgamiento corresponde a la Confederación. En todo caso se atenderá a lo que indique en relación a las medidas a tener en cuenta.", "tipo": "MP", "frecuencia": "Al inicio de la obra", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}]}, {"num": 5, "nombre": "GESTIÓN DE VERTIDOS, DERRAMES Y RESIDUOS", "items": [{"codigo": "7.1", "resumen": "Mantenimiento de maquinaria en talleres externos o zonas habilitadas", "texto": "Las operaciones de mantenimiento de maquinaria se realizarán preferentemente en talleres externos, en caso de averías de la maquinaria en la propia obra se realizará en zonas habilitadas al efecto.", "tipo": "MP", "frecuencia": "Al comienzo de la obra y cada dos meses.", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "7.2", "resumen": "Excedentes de estériles trasladados a vertedero autorizado", "texto": "Los excedentes de estériles se trasladarán a vertedero autorizado.", "tipo": "MC", "frecuencia": "Semanal", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "7.3", "resumen": "Empresas inscritas como Pequeños Productores de Residuos Peligrosos", "texto": "Las empresas que trabajen en la construcción de las instalaciones deberán inscribirse como Pequeños Productores de Residuos Peligrosos.", "tipo": "MP", "frecuencia": "Al comienzo del inicio de los trabajos de cada empresa", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "7.4", "resumen": "Residuos no peligrosos retirados a lugares autorizados", "texto": "Los residuos no peligrosos serán retirados y trasladados a lugares autorizados", "tipo": "MP", "frecuencia": "Semanal en fase de construcción Quincenal en fase de funcionamiento", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "7.5", "resumen": "Derrames accidentales retirados y almacenados correctamente", "texto": "Para evitar la contaminación de suelos, en caso de producirse derrames accidentales, deberán retirarse en el momento de su vertido y acumularse en recipientes homologados hasta su retirada por empresa autorizada.", "tipo": "MC", "frecuencia": "Semanal en fase de construcción Quincenal en fase de funcionamiento", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "7.6", "resumen": "Residuos peligrosos/inflamables en recipientes incombustibles cerrados", "texto": "En caso de existir desperdicios de combustibles, inflamables o peligrosos, se depositarán a medida que se produzcan en recipientes incombustibles cerrados. Los recipientes para estopa, trapos y materiales impregnados de sustancias, serán de cierre automático.", "tipo": "MP", "frecuencia": "Semanal en fase de construcción Quincenal en fase de funcionamiento", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}]}, {"num": 6, "nombre": "VEGETACIÓN", "items": [{"codigo": "8.1", "resumen": "Afección a pies arbóreos evitada en el replanteo", "texto": "En la fase de replanteo se evitará lo máximo posible la afección sobre pies arbóreos, situados en el perímetro o línea exterior de la planta del proyecto.", "tipo": "MP", "frecuencia": "Semanal y al final de la obra.", "origen": "EsIA", "fase": "previa", "faseOriginal": "Previo a Construcción"}, {"codigo": "8.2", "resumen": "Muestreo de flora amenazada realizado antes de obras", "texto": "Se deberá realizar un muestreo de campo exhaustivo previo las obras de construcción del complejo solar en la zona de actuación y su área de influencia (en torno a 1 km), así como en las masas forestales circundantes o de ribera, con el fin de detectar posibles especies amenazadas de flora por si hay que establecer medidas preventivas adicionales, debiendo comunicarse al Servicio Provincial de Medio Ambiente de Soria de la Junta de Castilla y León.", "tipo": "MP", "frecuencia": "Un mes antes del inicio de las obras", "origen": "IDAA", "fase": "previa", "faseOriginal": "Previo a Construcción"}, {"codigo": "8.3", "resumen": "Inicio de obras comunicado a Medio Ambiente (Junta CyL)", "texto": "Se ha de poner en conocimiento el inicio de las obras a la Consejería de Medio Ambiente de la Junta de Castilla y León para que pueda tomar medidas pertinentes en los Planes de Prevención y Extinción de Incendios Comarcales o en los que consideren oportuno.", "tipo": "MP", "frecuencia": "Un mes antes del inicio de las obras", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "8.4", "resumen": "Tránsito de maquinaria limitado a zonas delimitadas", "texto": "Las zonas de tránsito de maquinaria se reducirán a las áreas delimitadas, evitando la degradación de zonas adyacentes y la eliminación o deterioro innecesario de la vegetación existente. Como medida protectora, las máquinas no podrán salirse de las vías de acceso para evitar dañar al máximo las manchas de vegetación natural.", "tipo": "MP", "frecuencia": "Semanal", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "8.5", "resumen": "Sin derrames de aceites/lubricantes que afecten a la flora", "texto": "Se ha de evitar cualquier derrame de sustancias contaminantes, tales como aceites y otros lubricantes de máquinas que puedan contaminar el suelo y, por tanto, impedir el desarrollo normal de la flora.", "tipo": "MP", "frecuencia": "Semanal", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "8.6", "resumen": "Trazado de accesos minimiza afección a vegetación de mayor valor", "texto": "El trazado de los accesos debe minimizar el paso por las teselas de vegetación de valor mayor, a la vez que se busca su diseño enlazando las teselas de menor valor representadas por los cultivos herbáceos extensivos y matorrales secundarios.", "tipo": "MP", "frecuencia": "Semanal", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "8.7", "resumen": "Pantalla vegetal perimetral plantada (especies autóctonas)", "texto": "Con el fin de disminuir la exposición visual de la planta y favorecer la creación de áreas de refugio y cría de la fauna, se propone la creación de una pantalla vegetal lineal. Esta pantalla se plantará en el interior del vallado, paralelo al mismo, en lado norte de la planta que tiene mayor exposición a la carretera CL-116 y a la localidad de Alentisque. Tendrá una longitud de unos 650 metros lineales. Deberán plantarse especies autóctonas adaptadas a las condiciones naturales de la zona de estudio, como por ejemplo encina (Quercus rotundifolia), quejigo (Quercus faginea), romero (Rosmarinus officinalis) y rosas silvestres (Rosa micrantha, Rosa pouzinii). Los plantones serán de al menos 2 savias y se plantarán a una distancia de 2 metros. Tendrán un mantenimiento durante los primeros 3 años y se repondrán las marras que se produzcan durante ese periodo que se estiman en un 30%.", "tipo": "MCP", "frecuencia": "Al final de la obra", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "8.8", "resumen": "Vegetación natural favorecida entre filas de paneles; sin herbicidas", "texto": "Se favorecerá el desarrollo, siempre que sea posible, de vegetación natural en los márgenes y en las calles intermedias entre filas de paneles mediante revegetación natural. Se evitará el uso de herbicidas para controlar la vegetación, empleando medios manuales o preferiblemente el pastoreo.", "tipo": "MCP", "frecuencia": "Al final de la obra", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "8.9.1", "resumen": "Faja perimetral de protección contra incendios (30 m) mantenida", "texto": "\"Aplicación del RD 893/2013, de 25 de noviembre por el que se aprueba la Directriz básica de planificación de protección civil de emergencia por incendios forestales: A fin de disminuir o romper la continuidad de los combustibles forestales se deberá asegurar la existencia de una faja perimetral de protección de 30 metros de ancho dentro de la misma propiedad, alrededor de la urbanización, edificación o instalación, medida desde el límite exterior de la edificación o instalación destinada a las personas, libre de vegetación seca y con la masa arbórea aclarada. Siempre que sea posible, esta faja deberá ser de, al menos, ocho veces la altura de la vegetación dominante.\"", "tipo": "MP", "frecuencia": "Semanal", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "8.9.2", "resumen": "Medidas de autoprotección en Zonas de Alto Riesgo de incendio", "texto": "Aplicación del RD 893/2013, de 25 de noviembre por el que se aprueba la Directriz básica de planificación de protección civil de emergencia por incendios forestales: En las zonas de alto riesgo (ZAR) de incendio declaradas por cada Comunidad Autónoma, será necesario adoptar medidas especiales de autoprotección pasiva de la edificación o instalación frente a posibles fuentes de ignición procedente de incendios forestales.", "tipo": "MP", "frecuencia": "Semanal", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "8.9.3", "resumen": "Pistas cumplen características de servidumbre contraincendios", "texto": "Aplicación del RD 893/2013, de 25 de noviembre por el que se aprueba la Directriz básica de planificación de protección civil de emergencia por incendios forestales: Las infraestructuras de servicio a las edificaciones o instalaciones incluidas en zonas de alto riesgo (ZAR) de incendio, tendrán, según lo establecido en el artículo 48.6 de la Ley 43/2003, de 21 de noviembre, servidumbre de uso para su utilización por los servicios de prevención y extinción de incendios. A estos efectos las pistas que se realicen habrán de reunir las siguientes características: • Ancho de la vía de cinco metros en viales con dirección en dos sentidos, y a tres metros en viales de sentido único. Se establecerá en estas vías la debida señalización de acuerdo con las normas de tráfico: • Radio mínimo de giro interior de las curvas: 5 metros. • Gálibo de seguridad de poda de árboles: 5 metros. • Pendiente de la vía: inferior al 12%, pudiendo llegar ocasionalmente al 20% como máximo. • Zonas de cambio de sentido para cada kilómetro de vía, debiendo ser de 200 metros cuadrados y 8 metros mínimo de largo.", "tipo": "MP", "frecuencia": "Semanal", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "8.9.4", "resumen": "Sistemas de defensa contra incendios señalizados", "texto": "Aplicación del RD 893/2013, de 25 de noviembre por el que se aprueba la Directriz básica de planificación de protección civil de emergencia por incendios forestales: Todos los sistemas de defensa contra incendios deberán estar adecuadamente señalizados, de acuerdo con la normativa en vigor.", "tipo": "MP", "frecuencia": "Semanal", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "8.10", "resumen": "Afección a vegetación de lindes en zanjas minimizada", "texto": "A la hora de realizar las zanjas, se minimizará su afección con la vegetación de las lindes evitando su afección y si fuese necesario de procederá a su restauración y mejora. De igual modo, los caminos públicos de paso para acceso a la instalación deberán mantenerse en perfectas condiciones de uso, evitando su deterioro, así como las ocupaciones que dificulten el tránsito o la funcionalidad de los mismos.", "tipo": "MC", "frecuencia": "Semanal", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "8.11", "resumen": "Procedimiento constructivo respeta la vegetación existente", "texto": "Durante las obras, se seleccionará el procedimiento de construcción que minimice la alteración de la capa superficial del suelo, respetando la vegetación existente, minimizando los movimientos de tierra en la superficie de la planta, así como los acopios de cualquier tipo de material y zonas auxiliares deberán disponerse dentro del perímetro del proyecto, fuera de las áreas naturales a conservar y evitando la evacuación de solidos por escorrentía superficial.", "tipo": "MC", "frecuencia": "Semanal", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "8.12", "resumen": "Paneles instalados por hincado; vegetación bajo paneles conservada", "texto": "La instalación de los paneles debe de realizarse mediante hincado, ocupando la mínima superficie de suelo posible. Respecto a la vegetación del sustrato bajo los paneles solares, deberán permitir el desarrollo de vegetación herbácea y arbustiva dejando una distancia al suelo de al menos 0,5 m que favorezca su presencia sin que esta interfiera con el correcto funcionamiento de la planta ni al mantenimiento o seguimiento de la misma.", "tipo": "MC", "frecuencia": "Semanal", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "8.13", "resumen": "Plan de Autoprotección frente a incendios vigente y actualizado", "texto": "Se deberá de disponer de un Plan de Autoprotección, estableciendo las actuaciones a desarrollar con los medios propios de que se dispongan, para los casos de emergencia por incendios forestales que puedan afectarles. Tendrá un mantenimiento, con comprobación periódica de los sistemas de alerta y avisos, actualización de medios y recursos, formalización y actualización del personal actuante, contemplando especialmente los simulacros.", "tipo": "MP", "frecuencia": "Mensual", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}]}, {"num": 7, "nombre": "FAUNA", "items": [{"codigo": "9.1", "resumen": "Muestreo de fauna amenazada/nidificante realizado antes de obras", "texto": "Se deberá realizar un muestreo de campo exhaustivo previo las obras de construcción del complejo solar en la zona de actuación y su área de influencia (en torno a 1 km), así como en las masas forestales circundantes o de ribera, con el fin de detectar posibles especies amenazadas de flora y de fauna para identificar la posibilidad de aves nidificando en la zona y en sus inmediaciones por si hay que establecer medidas preventivas adicionales, debiendo comunicarse al Servicio Provincial de Medio Ambiente de Soria de la Junta de Castilla y León.", "tipo": "MP", "frecuencia": "Un mes antes del inicio de las obras", "origen": "IDAA", "fase": "previa", "faseOriginal": "Previo a Construcción"}, {"codigo": "9.2", "resumen": "Obras fuera de época de reproducción (abr-jun) o cría descartada", "texto": "Las obras se realizarán fuera de la época de reproducción de la fauna, principalmente entre los meses de abril y junio, si bien se podrán realizar trabajos fuera de esa época siempre que durante el seguimiento ambiental de la obra se constate que no crían especies protegidas o de interés en un radio de 1 km de la zona de instalación. (Inf. IDAA: Se respetará el periodo de nidificación para aquellos trabajos que puedan incidir en la avifauna, presentando un plan de trabajo que minimice su afección, estableciendo un calendario de obras se fijará en coordinación con el Servicio Territorial de Medio Ambiente).\"", "tipo": "MP", "frecuencia": "Un mes antes del inicio de las obras semanal durante la época de cría", "origen": "EsIA   \n IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "9.3", "resumen": "Vallado con malla cinegética ≥15 cm y aperturas para fauna", "texto": "El vallado perimetral de la planta se realizará con valla cinegética con una luz de malla de al menos 15 cm. Se realizarán aperturas a ras de suelo en forma de rectángulos de 30 cm en sentido horizontal y 20 cm en sentido vertical enmarcado por listones de hacer corrugado cada 200 metros. (Inf. IDAA: En relación con el vallado y con objeto de garantizar un adecuado nivel de permeabilidad, deberían instalarse pasos de fauna a lo largo de todo el perímetro del vallado. Se proponen aperturas de éste a ras de suelo en forma de rectángulos de 30 cm en sentido horizontal y 20 cm en sentido vertical, enmarcado por listones de acero corrugado, cada 200 m, evitando la cimentación en todo caso). \"", "tipo": "MC", "frecuencia": "Semanal durante la construcción del vallado", "origen": "EsIA    IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "9.4", "resumen": "Vallado no enterrado; permite paso de pequeños vertebrados", "texto": "El vallado se realizará de tal forma que no impida el tránsito de la fauna silvestre. No se enterrará el mallado para permitir el paso de pequeños vertebrados. Se evitará la cementación de bloque de hormigón en la parte inferior de la malla para permitir a ciertos mamíferos excavar pasos que comuniquen el exterior con el interior.", "tipo": "MC", "frecuencia": "Semanal durante la construcción del vallado", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "9.5", "resumen": "Sin materiales peligrosos en el vallado (vidrios, espinos, puntas)", "texto": "Se prohíbe expresamente la incorporación de materiales o soluciones potencialmente peligrosas como vidrios, espinos, filos y puntas.", "tipo": "MC", "frecuencia": "Semanal durante la construcción del vallado", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "9.6", "resumen": "Vallado señalizado con elementos de alta visibilidad para aves", "texto": "El vallado se señalizará con elementos de alta visibilidad, prioritariamente naturales, para evitar la colisión de las aves. Dispondrá en todo su trazado de señales reflectantes intercaladas en la malla cada 10 metros para así disminuir la posibilidad de impactos de la avifauna. (Inf. IA: Se instalarán pequeñas placas de color claro cada 10 metros del vallado y de la subestación para aumentar su visibilidad).", "tipo": "MC", "frecuencia": "Semanal durante la construcción del vallado", "origen": "EsIA    IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "9.7", "resumen": "Bandas anticolisión en paneles instaladas", "texto": "Se recomienda el uso de bandas sobre los paneles fotovoltaicos en forma de rejilla que minimicen la mortalidad de insectos y los posibles impactos de pequeñas aves. Sería recomendable que no todos los paneles se recubrieran con el fin de profundizar en el análisis de las afecciones, con el fin de evaluar los efectos a lo largo de los primeros años estableciéndolos en el programa de vigilancia ambiental.", "tipo": "MC", "frecuencia": "Durante la fase de colocación de los paneles", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "9.8", "resumen": "Manchas de vegetación natural con refugios (bug-hotel) conservadas", "texto": "Se mantendrá o favorecerá el desarrollo, siempre que sea posible, de vegetación natural en los márgenes y en las calles intermedias entre filas de paneles. (Inf. IDAA: Se dejarán tres manchas de 100 m2 distribuidas por distintas zonas de los módulos fotovoltaicos donde existe vegetación natural que no se va a tocar y en cada mancha se instalarán estructuras tipo bug-hotel a modo de refugios para favorecer a los polinizadores. El seguimiento de estas manchas se incluirá en el Plan de Seguimiento y Vigilancia Ambiental).", "tipo": "MC", "frecuencia": "Al final de la obra", "origen": "EsIA   \n IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "9.9", "resumen": "Sin herbicidas; desbrozadora o pastoreo priorizado", "texto": "Dentro de la planta solar se procurará evitar la utilización de herbicidas para controlar la vegetación. Se recomienda el empleo de desbrozadora o pastoreo, priorizando siempre que sea posible el pastoreo.", "tipo": "MC", "frecuencia": "Al final de la obra Mensual", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}]}, {"num": 8, "nombre": "PATRIMONIO CULTURAL", "items": [{"codigo": "10.1", "resumen": "Control arqueológico de movimientos de tierra en yacimientos (buffer 25 m)", "texto": "Se deberá realizar un control arqueológico de los movimientos de tierra en el área que ocupa el yacimiento y un buffer en su entorno de 25m. (Inf. IDAA: A fin de garantizar la correcta documentación y protección de posibles evidencias arqueológicas no detectadas durante la fase de prospección, se propone como medida preventiva la realización de un seguimiento y control arqueológico periódico y puntual de los movimientos de tierra asociados a la ejecución de la planta solar fotovoltaica, fundamentalmente vinculados a los desbroces, apertura de viales y zanjas de baja y media tensión. Se hará hincapié en dicho control en el área que ocupa el yacimiento «Cerro Gordo» y en un buffer en su entorno de 25 m, así como en el yacimiento «Carre La Puebla», como asegurar la integridad de los elementos etnológico durante los trabajos de construcción de la planta, tal y como se establece en las resoluciones del Servicio Provincial de Cultura de Soria (Expediente RH-38/2023-5 de fechas 28 de abril de 2023 y 29 de mayo de 2023)).", "tipo": "MC", "frecuencia": "Semanal", "origen": "EsIA    IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "10.2", "resumen": "Hallazgos arqueológicos comunicados de inmediato a Cultura", "texto": "Ante la aparición de algún resto se comunicará inmediatamente al Servicio Territorial de Cultura de Junta de Castilla y León y ésta tomará las medidas oportunas. (Inf. IDAA: Si durante el seguimiento y vigilancia de las obras se localizaran yacimientos arqueológicos no visualizados, su hallazgo será notificado inmediatamente al Servicio Territorial de Cultura de Soria, balizándose para evitar que sufran daños y se establecerán las medidas de protección que eviten la destrucción de los niveles arqueológicos, quedando a la espera de las indicaciones de la Administración competente en protección patrimonial)", "tipo": "MC", "frecuencia": "Semanal", "origen": "EsIA    IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "10.3", "resumen": "Vías pecuarias delimitadas y señalizadas", "texto": "Se delimitarán y señalizarán las vías pecuarias existentes en la zona, evitando la afección a su trazado.", "tipo": "MP", "frecuencia": "Al inicio de la obra y semanal", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "10.4", "resumen": "Sin ocupación de vías pecuarias sin autorización", "texto": "Se vigilará que no se ocupe ninguna vía pecuaria sin permiso concedido por el Servicio Territorial de Medio Ambiente de Junta de Castilla y León.", "tipo": "MP", "frecuencia": "Al inicio de la obra Semanal", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "10.5", "resumen": "Estado y uso ganadero de vías pecuarias garantizado", "texto": "En relación a las vías pecuarias, deberán garantizarse el mantenimiento del correcto estado de estos bienes de dominio público, y que no se vea interrumpido el paso ganadero en ningún momento, tanto en explotación como en obra, así como garantizar los demás usos compatibles y complementarios según se recogen en la Ley 3/1995, de 23 de marzo, de Vías Pecuarias.", "tipo": "MP", "frecuencia": "Semanal", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}]}, {"num": 9, "nombre": "SOCIOECONOMÍA", "items": [{"codigo": "11.1", "resumen": "Transportes en horas de menor tráfico", "texto": "Se procurará que los trasportes por carretera se realicen en las horas de menor intensidad de tráfico.", "tipo": "MP", "frecuencia": "Semanal y al final de la obra.", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "11.2", "resumen": "Mojones y señales de delimitación de fincas/cotos/montes respetados", "texto": "Durante la fase de obras se señalizarán los mojones y señales de delimitación de fincas, cotos, montes etc.", "tipo": "MP", "frecuencia": "Al inicio de la obra y semanal", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "11.3", "resumen": "Vías pecuarias delimitadas y señalizadas", "texto": "Se delimitarán y señalizarán las vías pecuarias existentes en la zona, evitando la afección a su trazado.", "tipo": "MP", "frecuencia": "Al inicio de la obra y semanal", "origen": "EsIA", "fase": "construccion", "faseOriginal": "Construcción"}]}, {"num": 10, "nombre": "PAISAJE", "items": [{"codigo": "12.1", "resumen": "Pantalla vegetal interior del cerramiento plantada", "texto": "Para mitigación del impacto visual se colocará una pantalla vegetal en el lado interior del cerramiento, de la misma altura del vallado y un espesor aproximado de 0,5 m. Las especies de plantas/arbolado para la realización de esta pantalla serán perennes y de especies autóctonas. (Inf. IDAA: Para asegurar un adecuado nivel de conectividad y favorecer al paisaje, se retranqueará el vallado 5 m hacia el interior de todo su perímetro llevándose a cabo la plantación de una franja de especies forestales a una densidad de 1.000 plantas/ha, de plantas de 2 savias, en contenedor de al menos 300 cm3 y protector de 50 cm de altura. La composición estaría formada por especies vegetales de la zona y aprobado por el Servicio Territorial de Medio Ambiente de Soria. Se deberá mantener en adecuado estado vegetativo para que cumpla con el objetivo de ser un corredor verde. El material forestal debe de cumplir con lo establecido en el Decreto 54/2007, de 24 de mayo, por el que se regula la comercialización de los materiales forestales de reproducción en la Comunidad de Castilla y León).", "tipo": "MC", "frecuencia": "Al final de la obra", "origen": "EsIA    IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "12.2", "resumen": "Partida económica de desmantelamiento y restauración prevista", "texto": "Se deberá de fijar una partida económica que cubra los gastos derivados del desmantelamiento de las instalaciones y el reacondicionamiento visual de la zona de implantación. (Inf. IDAA: Se presentará un Plan de Desmantelamiento y Restauración de los terrenos afectados por la planta fotovoltaica una vez finalice el periodo de vida útil de la planta, para que las afecciones que plantean se minimicen y sean temporales. Dicho plan deberá presentarse antes de finalizar la obra como máximo, incluyendo el compromiso de su realización por parte del promotor).", "tipo": "MCP", "frecuencia": "Previo al final de la obra", "origen": "EsIA    IDAA", "fase": "construccion", "faseOriginal": "Construcción"}, {"codigo": "12.3", "resumen": "Plantaciones en época adecuada (oct-abr), con mantenimiento", "texto": "Las plantaciones se realizarán en función de la climatología, entre los meses de octubre y abril y se deberá garantizar el mantenimiento (riegos, podas, etc.) de la misma durante la vida útil de la instalación. Se deberán reponer las marras producidas al año siguiente de la misma durante al menos los 10 primeros años de la plantación, admitiéndose unas marras de un máximo de un 10% del total de la planta o siempre que no se consiga el efecto de apantallamiento o de corredor con la vegetación superviviente. Este seguimiento deberá estar contemplado en el Plan de Vigilancia.", "tipo": "MC", "frecuencia": "Al final de la obra y periódico durante la explotación (al menos los 10 primeros años desde la ejecución de las plantaciones)", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "12.4", "resumen": "Cajas nido / refugios para fauna instalados; majanos mantenidos", "texto": "Para favorecer la utilización y relativa naturalización de la superficie vallada se procederá a la colocación en el entorno vallado o en otros puntos de la superficie de la planta de cajas nido, refugios para quirópteros u otro tipo de refugios para la fauna. Además, se procederá al mantenimiento de majanos existentes en la zona, que presenten vegetación arbórea y arbustiva, para mantener la biodiversidad de la zona.", "tipo": "MCP", "frecuencia": "Al final de la obra y durante la explotación", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "12.5", "resumen": "Restauración de superficies temporales afectadas", "texto": "La restauración deberá ir encaminada a la recuperación de las superficies temporales afectadas, especialmente las formaciones vegetales formadas por especies leñosas y hábitat de interés comunitario.", "tipo": "MC", "frecuencia": "Al final de la obra", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}]}, {"num": 11, "nombre": "SEGUIMIENTO AMBIENTAL DEL PROYECTO", "items": [{"codigo": "13.1", "resumen": "Documento de cumplimiento de medidas de restauración (previo a explotación)", "texto": "Tras las obras, antes del inicio de la actividad y dentro del primer informe del plan de vigilancia ambiental, se deberá elaborar un documento acerca del grado de cumplimiento de las medidas de restauración propuestas en el estudio de impacto ambiental, en aspectos tales como la gestión de las tierras (desbroces, acopios y almacenamiento de la tierra vegetal, preparación de suelo) y la regeneración de la vegetación en la planta fotovoltaica.", "tipo": "MS", "frecuencia": "Previo al inicio de la actividad", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Posterior a la construcción y previa a la explotación"}, {"codigo": "13.2", "resumen": "Impactos no previstos comunicados al órgano competente", "texto": "Si durante las actuaciones asociadas al presente proyecto se detectase algún impacto no analizado o cuya magnitud fuera superior a la evaluada se comunicará dicha circunstancia al órgano autonómico competente para la determinación de la forma de proceder.", "tipo": "MS", "frecuencia": "Cuando se detecte el impacto", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "13.3", "resumen": "Coordinación con las medidas de la parte eólica del proyecto", "texto": "Al tratarse de un proyecto de hibridación, las medidas y condiciones deben ir acordes en su conjunto, coordinadas y relacionadas en lo posible con las establecidas para la parte eólica del proyecto.", "tipo": "MS", "frecuencia": "Mensual", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "13.4", "resumen": "Medidas definidas y presupuestadas por el promotor", "texto": "Cada una de las medidas establecidas en el Estudio de impacto ambiental y en la Resolución del Informe de Determinación de Afección Ambiental deberán estar definidas y presupuestadas por el promotor en el proyecto o en una adenda al mismo, previamente a su aprobación. Será imprescindible un correcto desarrollo del Plan de Vigilancia Ambiental tanto en lo relacionado con las distintas fases del proyecto como con las medidas en él establecidas, relativas a periodos, plazos y seguimientos previstos.", "tipo": "MS", "frecuencia": "Previo al inicio de la actividad", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}, {"codigo": "13.5", "resumen": "Modificaciones significativas notificadas a la Administración", "texto": "Toda modificación significativa sobre las características de las actuaciones proyectadas, que pudiera producirse con posterioridad, deberá ser notificada a la Subdirección General de Calidad y Evaluación Ambiental que dictará su conformidad si procede, sin perjuicio de las licencias o permisos que, en su caso, correspondan.", "tipo": "MS", "frecuencia": "Cuando se produzca la modificación", "origen": "IDAA", "fase": "construccion", "faseOriginal": "Construcción y explotación"}]}];
+const TEMAS_DATA = [{"num":1,"nombre":"OCUPACIÓN DEL TERRITORIO","items":[{"codigo":"1.1","resumen":"Zonas de valor natural y hábitats prioritarios señalizadas","texto":"Se señalizarán las zonas con valor natural, fundamentalmente las zonas de cruce de los arroyos y cauces de agua. Se delimitarán y señalizarán las zonas con hábitat catalogados como prioritarios que se encuentren en el área de ocupación de la obra y en el radio de acción de la maquinaria, para evitar en lo posible afecciones sobre los mismos.","tipo":"MP","frecuencia":"Semanal y al final de la obra. Al finalizar la obra, determinación de las zonas que se deben dejar desocupadas.","origen":"EsIA","fase":"ambas","faseOriginal":"Previo a Construcción y Construcción"},{"codigo":"1.2","resumen":"Zona de obras, paso de maquinaria y acopios jalonados","texto":"Se jalonará la zona de obras, zona de paso de maquinaria, zonas de acopio e instalaciones auxiliares, para así minimizar el posible daño a la vegetación colindante, la compactación de suelos y garantizar la protección de la fauna sensible.","tipo":"MP","frecuencia":"Semanal y al final de la obra. Al finalizar la obra, determinación de las zonas que se deben dejar desocupadas.","origen":"EsIA","fase":"ambas","faseOriginal":"Previo a Construcción y Construcción"},{"codigo":"1.3","resumen":"Zonas auxiliares fuera de vegetación natural y cauces","texto":"Las ubicaciones de las zonas auxiliares de obra (parque de maquinaria, punto limpio, zonas de acopio, etc.) evitarán las zonas con vegetación natural y las cercanías de los cauces de agua.","tipo":"MP","frecuencia":"Semanal y al final de la obra. Al finalizar la obra, determinación de las zonas que se deben dejar desocupadas.","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"1.4","resumen":"Ocupación limitada a zonas autorizadas (camino, estructuras, CT)","texto":"La explanación del camino, las zonas donde se ubicarán las estructuras y las plataformas de los centros de transformación constituyen las únicas zonas del terreno que pueden ser ocupadas, debiendo permanecer el resto del territorio, en lo posible, en su estado natural, por lo que no podrá ser usado, bajo ningún concepto, para circular o estacionar vehículos, o para acopiar materiales.","tipo":"MP","frecuencia":"Semanal y al final de la obra. Al finalizar la obra, determinación de las zonas que se deben dejar desocupadas.","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"1.5","resumen":"Cabeceras de barrancos y cauces sin ocupar ni interrumpir","texto":"No se ocuparán cabeceras de barrancos ni se interrumpirán los cauces naturales o artificiales de agua.","tipo":"MP","frecuencia":"Inspección visual semanal en cauces","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"1.6.1","resumen":"Vallado perimetral ejecutado según proyecto (distancias, puertas, malla)","texto":"1.6) VALLADO: El cerramiento perimetral exterior se realizará respetando las directrices recomendadas por el ayuntamiento de Alentisque, colocando éste a una distancia mínima respecto de los caminos y parcelas colindantes y respetando el resto de servidumbres marcadas por ley respecto de carreteras, cauces, restos arqueológicos, etc. Se preverá una puerta para el acceso de vehículos y de personal en cada uno de los accesos. La puerta de acceso a la planta fotovoltaica será de doble hoja abatible, con marco metálico, disponiendo de cerradura con resbalón, manilla, condena y bombín. La anchura de dicho portón será de 5 metros. El vallado perimetral de la planta se realizará con valla cinegética con una luz de malla de al menos 15 cm. Se realizarán aperturas a ras de suelo en forma de rectángulos de 30 cm en sentido horizontal y 20 cm en sentido vertical enmarcado por listones de hacer corrugado cada 200 metros Se realizará de tal forma que no impida el tránsito de la fauna silvestre. No se enterrará el mallado para permitir el paso de pequeños vertebrados. Se evitará la cementación de bloque de hormigón en la parte inferior de la malla para permitir a ciertos mamíferos excavar pasos que comuniquen el exterior con el interior. Se prohíbe expresamente la incorporación de materiales o soluciones potencialmente peligrosas como vidrios, espinos, filos y puntas. El vallado se señalizará con elementos de alta visibilidad, prioritariamente naturales, para evitar la colisión de las aves. Dispondrá en todo su trazado de señales reflectantes intercaladas en la malla cada 10 metros para así disminuir la posibilidad de impactos de la avifauna.","tipo":"MP","frecuencia":"Semanal durante la construcción del vallado","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"1.6.2","resumen":"Vallado no interrumpe cursos de agua ni favorece erosión","texto":"1.6) VALLADO: No interrumpirá los cursos naturales de agua ni favorecerá la erosión ni el arrastre de tierras.","tipo":"MP","frecuencia":"Semanal durante la construcción del vallado y al final de la obra.","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"1.7","resumen":"Uso prioritario de caminos existentes; nuevos trazados según ficha técnica","texto":"Maximizar la utilización de los caminos existentes en la zona, definiendo nuevos trazados únicamente en los casos imprescindibles de forma que se respete la rasante del terreno natural. Adecuación de los caminos existentes que no alcancen los mínimos necesarios. Características de los viales que se ejecutarán: • La anchura mínima necesaria es de 5 m en los viales. • Los viales de nueva construcción requerirán en cada caso excavación o relleno de terraplén y relleno de zahorras con espesor mínimo de 25 cm. Será necesario disponer de cunetas y pasos de agua para la evacuación del agua de lluvia a ambos lados del camino. En todo caso se buscará preservar el discurso de las aguas de escorrentía por sus cursos naturales. • El radio del eje de curvatura requerido es de 10 m; en casos excepcionales se estudiará la posibilidad de realizar sobreanchos. • Pendiente máxima del 9% para viales y del 14% en caso de viales asfaltados. • Los terraplenes se realizarán 3/2 y los desmontes 1/2 como mínimo. • La construcción de los nuevos caminos, o la mejora de los existentes, debe ir acompañada de un sistema de drenaje longitudinal y transversal adecuado, que permita la evacuación del agua de la calzada y la procedente de las laderas contiguas. • El drenaje transversal se soluciona con el bombeo de un 1% de la calzada, evacuando así las aguas lateralmente.","tipo":"MP","frecuencia":"Semanal y al final de la obra. Al finalizar la obra, determinación de las zonas que se deben dejar desocupadas.","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"1.8","resumen":"Zonas de acopio liberadas restauradas a cultivo o vegetación autóctona","texto":"Las zonas temporales de acopios y que posteriormente queden libres deberán restablecerse para cultivos o bien especies autóctonas.","tipo":"MC","frecuencia":"Semanal durante el Plan de restauración","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción"}]},{"num":2,"nombre":"CONTROL DE EMISIONES ATMOSFÉRICAS, RUIDO Y CONTAMINACIÓN LUMÍNICA","items":[{"codigo":"2.1","resumen":"Maquinaria con ITV en vigor y emisiones dentro de norma","texto":"La maquinaria deberá cumplir con los requisitos en cuanto a inspecciones técnicas (ITV), de manera que se certifique que los procesos de combustión de carburantes son correctos y se hallan dentro de la legislación en cuanto a emisión para CO, C, NOx, hidrocarburos.","tipo":"MP/MS","frecuencia":"Semanal y al final de la obra. Al finalizar la obra, determinación de las zonas que se deben dejar desocupadas.","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"2.2","resumen":"Acopios pulverulentos protegidos del viento o regados","texto":"Evitar el almacenamiento de materiales en lugares que no se encuentren al abrigo del viento, o riego de los acopios pulverulentos y caminos de acceso utilizados por la maquinaria.","tipo":"MP","frecuencia":"Semanal y al final de la obra.","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"2.3","resumen":"Materiales pulverulentos transportados en camiones con lona","texto":"Traslado de los materiales pulverulentos en camiones cubiertos con lonas.","tipo":"MP","frecuencia":"Semanal y al final de la obra.","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"3.1","resumen":"Obras ejecutadas en el menor tiempo posible (molestias a población)","texto":"Con el fin de minimizar las molestias a la población, las obras se realizarán en el menor tiempo posible.","tipo":"MP","frecuencia":"Semanal y al final de la obra.","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"3.2","resumen":"Mediciones periódicas de ruido dentro de límites legales","texto":"Se realizarán mediciones periódicas de ruido para comprobar que los niveles sonoros generados durante las labores de mantenimiento de la planta solar se encuentran dentro de los límites establecidos por la ley.","tipo":"MC","frecuencia":"Al inicio de las obras, a mitad del desarrollo de la obra y a fin de obra","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"4.1","resumen":"Iluminación nocturna minimizada; luminarias adecuadas (>440 nm, hacia el suelo)","texto":"Se evitará la iluminación de la planta siempre que sea posible, limitando la iluminación nocturna al mínimo y utilizando lámparas que emitan luz con longitudes de onda superiores a 440 nm. Los puntos de luz nunca serán de tipo globo y se procurará que el tipo empleado no disperse el haz luminoso, que verá enfocarse hacia abajo. (Inf. IDAA: Se evitará la iluminación nocturna de la planta fotovoltaica, así como los trabajos nocturnos durante la construcción, con las únicas excepciones de sistemas requeridos por la normativa y de dispositivos de iluminación imprescindibles en las edificaciones auxiliares o para hacer frente a situaciones de riesgo. En tal caso, se utilizarán luminarias que no emitan luz blanca rica en longitudes de onda corta (azules y UV), la iluminación se proyectará hacia el suelo por debajo del plano horizontal, y se limitará a lo estrictamente necesario).","tipo":"MP","frecuencia":"Semanal y al final de la obra durante la fase de construcción A determinar durante la fase de funcionamiento","origen":"EsIA   \n IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"}]},{"num":3,"nombre":"GEOMORFOLOGÍA, EROSIÓN Y SUELOS","items":[{"codigo":"5.1","resumen":"Trazado de pistas optimizado para reducir movimiento de tierras","texto":"Se intentará optimizar el trazado de las pistas de servicio de manera que se reduzca el volumen de tierras a mover.","tipo":"MP","frecuencia":"Semanal y al final de la obra.","origen":"EsIA","fase":"previa","faseOriginal":"Previo a Construcción"},{"codigo":"5.2","resumen":"Gestión y transporte de materiales planificado, sin plataformas extra","texto":"Se establecerá una planificación correcta y pensada en la gestión y transporte de materiales de construcción y piezas de la planta, así como una buena gestión en el transporte y almacenamiento de los mismos, que evitará la construcción de plataformas adicionales dedicadas al almacenamiento de los mismos.","tipo":"MP","frecuencia":"Semanal y al final de la obra.","origen":"EsIA","fase":"previa","faseOriginal":"Previo a Construcción"},{"codigo":"5.3","resumen":"Tierra vegetal separada de la extraída en profundidad","texto":"Durante los movimientos de tierra se ha de separar adecuadamente la tierra vegetal procedente del nivel superficial de la extraída en profundidad con mayor porcentaje de rocas, para la posterior reposición de la cubierta vegetal deteriorada.","tipo":"MC","frecuencia":"Antes del inicio de la obra y cada vez que se deba delimitar una zona de acopio. Supervisión visual semanal","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"5.4","resumen":"Procedimiento constructivo minimiza alteración del suelo y escorrentía","texto":"Durante las obras, se seleccionará el procedimiento de construcción que minimice la alteración de la capa superficial del suelo, respetando la vegetación existente, minimizando los movimientos de tierra en la superficie de la planta, así como los acopios de cualquier tipo de material y zonas auxiliares deberán disponerse dentro del perímetro del proyecto, fuera de las áreas naturales a conservar y evitando la evacuación de solidos por escorrentía superficial.","tipo":"MC","frecuencia":"Semanal","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"5.5","resumen":"Paneles instalados mediante hincado; vegetación bajo paneles preservada","texto":"La instalación de los paneles debe de realizarse mediante hincado, ocupando la mínima superficie de suelo posible. Respecto a la vegetación del sustrato bajo los paneles solares, deberán permitir el desarrollo de vegetación herbácea y arbustiva dejando una distancia al suelo de al menos 0,5 m que favorezca su presencia sin que esta interfiera con el correcto funcionamiento de la planta ni al mantenimiento o seguimiento de la misma.","tipo":"MC","frecuencia":"Semanal","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"5.6","resumen":"Superficies compactadas descompactadas al finalizar obra","texto":"Una vez terminadas las labores de construcción, se deberán descompactar las superficies de terreno ocupadas de forma continuada durante la construcción del proyecto, siempre y cuando no constituyan un acceso al mismo. La descompactación se realizará mediante la roturación de la zona afectada y la posterior nivelación.","tipo":"MC","frecuencia":"Al final de la obra","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"5.7","resumen":"Residuos y materiales de obra retirados al finalizar","texto":"Una vez terminadas las labores de construcción, eliminación de los residuos y materiales generados durante las obras, retirada inmediata de materiales acumulados, más aún si supusiera un impedimento, obstáculo o peligro para el tránsito de peatones o vehículos, así como la adecuada actuación en caso de vertidos accidentales y restitución del estado original del terreno previo a la actuación.","tipo":"MC","frecuencia":"Al final de la obra","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"5.8","resumen":"Caminos utilizados restituidos a su estado original","texto":"Una vez terminadas las labores de construcción, restitución del estado original de caminos que hubiera sido necesario utilizar en la fase de construcción y hubiesen resultado alterados o dañados. Se rehabilitarán los daños efectuados a las propiedades durante la construcción o bien se efectuará una compensación económica por los mismos.","tipo":"MC","frecuencia":"Al final de la obra","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"5.9","resumen":"Zonas auxiliares (parque maquinaria, viales, etc.) restauradas","texto":"Una vez terminadas las labores de construcción, restauración de zonas afectadas (parque de maquinaria, viario de acceso a las obras, instalaciones auxiliares, etc.): eliminación adecuada de cualquier vertido accidental, una vez hayan finalizado todos los trabajos asociados a la construcción de las diferentes infraestructuras, restituyendo la forma y aspectos originales del terreno.","tipo":"MC","frecuencia":"Al final de la obra","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"5.10","resumen":"Derrames accidentales retirados y almacenados en recipientes homologados","texto":"Para evitar la contaminación de suelos, en caso de producirse derrames accidentales, deberán retirarse en el momento de su vertido y acumularse en recipientes homologados hasta su retirada por empresa autorizada.","tipo":"MC","frecuencia":"Semanal en fase de construcción Quincenal en fase de funcionamiento","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"5.11","resumen":"Uso de caminos preexistentes; sin caminos viciados nuevos","texto":"Se evitará al máximo la creación de caminos viciados utilizando cuando sea posible los caminos preexistentes.","tipo":"MP","frecuencia":"Semanal en fase de construcción Quincenal en fase de funcionamiento","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"5.12","resumen":"Cambios de aceite controlados, sin vertidos, gestor autorizado","texto":"Los cambios de aceite de la maquinaria utilizada en la construcción de la planta se realizarán con especial precaución evitando posibles vertidos, recogiéndose en bidones y depósitos destinados a tal fin, haciéndolos llegar a un gestor de residuos autorizado.","tipo":"MP","frecuencia":"Semanal en fase de construcción Quincenal en fase de funcionamiento","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción y explotación"}]},{"num":4,"nombre":"CALIDAD DE AGUAS SUPERFICIALES","items":[{"codigo":"6.1","resumen":"Dinámica hídrica y calidad de aguas superficiales preservada","texto":"Deberán garantizar la no alteración significativa de la dinámica hídrica de la zona y asegurar en todo momento la calidad de las aguas superficiales y subterráneas, garantizando el drenaje de las aguas superficiales, manteniendo los márgenes limpios, no afectando a la vegetación de la ribera, disponiendo de sistemas eficiente para la recogida y evacuación de la zona de lluvia.","tipo":"MP","frecuencia":"Inspección visual semanal en cauces","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"6.2","resumen":"Retención de sólidos antes de evacuar escorrentía; acopios sin riesgo de vertido","texto":"Durante los movimientos de tierras, se deberán establecer las medidas necesarias para la retención de sólidos previa a la evacuación de las aguas de escorrentía superficial, así como otras posibles medidas para reducir al mínimo el riesgo de contaminación de las aguas superficiales. Cualquier acopio de materiales se ubicará de manera que se impida cualquier riesgo de vertido, ya sea directo o indirecto; por escorrentía, erosión, infiltración u otros mecanismos sobre las aguas superficiales o subterráneas.","tipo":"MP","frecuencia":"Al comienzo y al final de movimientos de tierras. Inspección visual semanal en cauces","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"6.3","resumen":"Respeto de la servidumbre de 5 m del DPH; sin instalaciones en Zona de Flujo Preferente","texto":"Se deberá realizar el proyecto respetando el dominio público hidráulico y su zona de servidumbre 5 metros de anchura de los cauces públicos, según establece el artículo 6 del Real Decreto Legislativo 1/2001, no colocando ningún tipo de instalación (como módulos fotovoltaicos y líneas eléctricas) en la Zona de Flujo Preferente que puedan suponer un obstáculo a los cauces, permanentes y temporales, presentes en la zona del proyecto. Los cerramientos y vallados que se implanten en la zona de flujo preferente, deben ser en todo caso permeables. No se debe poner en riesgo la capacidad de desagüe por modificaciones de terreno en estas zonas y se debe evitar el acopio en la Zona de flujo preferente de materiales que puedan ser arrastrados o puedan degradar el DPH, así como evitar el almacenamiento de residuos de todo tipo. En cualquier caso, se deberá consultar al organismo de cuenca correspondiente en relación a las posibles afecciones que se produzcan sobre dominio público hidráulico, así como las medidas preventivas y correctoras a adoptar.","tipo":"MP","frecuencia":"Semanal","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"6.4","resumen":"Materiales sobrantes y residuos retirados al finalizar obra","texto":"Una vez terminadas las labores de construcción, eliminación adecuada de los materiales sobrantes en las obras y de cualquier residuo almacenado. Si se produce algún vertido accidental durante la construcción se retirará y será depositado en vertedero autorizado.","tipo":"MC","frecuencia":"Semanal","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"6.5","resumen":"Sin cambios de aceite ni combustible cerca del medio hídrico","texto":"Prohibición expresa de cambios de aceite o almacenamiento de combustibles próximo al medio hídrico y realizándolos en lugares autorizados.","tipo":"MP","frecuencia":"Semanal en fase de construcción Quincenal en fase de funcionamiento","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"6.6","resumen":"Cauces balizados en la zona de trabajo","texto":"Se balizarán todos los cauces de la zona de trabajo para evitar su afección.","tipo":"MP","frecuencia":"Semanal en fase de construcción Quincenal en fase de funcionamiento","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"6.7","resumen":"Sin vertidos contaminantes en el entorno","texto":"Se vigilará y controlará la no realización de vertidos contaminantes en el entorno afectado.","tipo":"MP","frecuencia":"Semanal en fase de construcción Quincenal en fase de funcionamiento","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"6.8","resumen":"Sin instalaciones para personas dentro del DPH","texto":"En ningún caso se autorizarán dentro del DPH la construcción montaje o ubicación de instalaciones destinadas albergar personas, aunque sea con carácter provisional o temporal, de acuerdo con lo establecido en el artículo 77 del Reglamento de DPH.","tipo":"MP","frecuencia":"Semanal en fase de construcción Cada dos meses en fase de funcionamiento","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"6.9","resumen":"Autorización de Confederación Hidrográfica para actuaciones en DPH","texto":"Será necesario la autorización para actuaciones en el Dominio Público Hidráulico por parte de Confederación Hidrográfica del Duero y del Ebro en cada caso.","tipo":"MP","frecuencia":"Al inicio de la obra","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"6.10","resumen":"Autorización de Confederación para actuaciones en zona de policía de cauces","texto":"Se ha de considerar que toda actuación que realice en la zona de policía de cualquier cauce público deberá contar con la preceptiva autorización de la Confederación, según establece la vigente legislación de aguas, y en particular las actividades mencionadas en el artículo 9 del Reglamento del DPH.","tipo":"MP","frecuencia":"Al inicio de la obra","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"6.11","resumen":"Autorización para captaciones de agua del DPH","texto":"En caso de realización de captaciones de aguas directamente del DPH o de cualquier otra actividad se deberá disponer de la correspondiente autorización, cuyo otorgamiento corresponde a la Confederación. En todo caso se atenderá a lo que indique en relación a las medidas a tener en cuenta.","tipo":"MP","frecuencia":"Al inicio de la obra","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"}]},{"num":5,"nombre":"GESTIÓN DE VERTIDOS, DERRAMES Y RESIDUOS","items":[{"codigo":"7.1","resumen":"Mantenimiento de maquinaria en talleres externos o zonas habilitadas","texto":"Las operaciones de mantenimiento de maquinaria se realizarán preferentemente en talleres externos, en caso de averías de la maquinaria en la propia obra se realizará en zonas habilitadas al efecto.","tipo":"MP","frecuencia":"Al comienzo de la obra y cada dos meses.","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"7.2","resumen":"Excedentes de estériles trasladados a vertedero autorizado","texto":"Los excedentes de estériles se trasladarán a vertedero autorizado.","tipo":"MC","frecuencia":"Semanal","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"7.3","resumen":"Empresas inscritas como Pequeños Productores de Residuos Peligrosos","texto":"Las empresas que trabajen en la construcción de las instalaciones deberán inscribirse como Pequeños Productores de Residuos Peligrosos.","tipo":"MP","frecuencia":"Al comienzo del inicio de los trabajos de cada empresa","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"7.4","resumen":"Residuos no peligrosos retirados a lugares autorizados","texto":"Los residuos no peligrosos serán retirados y trasladados a lugares autorizados","tipo":"MP","frecuencia":"Semanal en fase de construcción Quincenal en fase de funcionamiento","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"7.5","resumen":"Derrames accidentales retirados y almacenados correctamente","texto":"Para evitar la contaminación de suelos, en caso de producirse derrames accidentales, deberán retirarse en el momento de su vertido y acumularse en recipientes homologados hasta su retirada por empresa autorizada.","tipo":"MC","frecuencia":"Semanal en fase de construcción Quincenal en fase de funcionamiento","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"7.6","resumen":"Residuos peligrosos/inflamables en recipientes incombustibles cerrados","texto":"En caso de existir desperdicios de combustibles, inflamables o peligrosos, se depositarán a medida que se produzcan en recipientes incombustibles cerrados. Los recipientes para estopa, trapos y materiales impregnados de sustancias, serán de cierre automático.","tipo":"MP","frecuencia":"Semanal en fase de construcción Quincenal en fase de funcionamiento","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción y explotación"}]},{"num":6,"nombre":"VEGETACIÓN","items":[{"codigo":"8.1","resumen":"Afección a pies arbóreos evitada en el replanteo","texto":"En la fase de replanteo se evitará lo máximo posible la afección sobre pies arbóreos, situados en el perímetro o línea exterior de la planta del proyecto.","tipo":"MP","frecuencia":"Semanal y al final de la obra.","origen":"EsIA","fase":"previa","faseOriginal":"Previo a Construcción"},{"codigo":"8.2","resumen":"Muestreo de flora amenazada realizado antes de obras","texto":"Se deberá realizar un muestreo de campo exhaustivo previo las obras de construcción del complejo solar en la zona de actuación y su área de influencia (en torno a 1 km), así como en las masas forestales circundantes o de ribera, con el fin de detectar posibles especies amenazadas de flora por si hay que establecer medidas preventivas adicionales, debiendo comunicarse al Servicio Provincial de Medio Ambiente de Soria de la Junta de Castilla y León.","tipo":"MP","frecuencia":"Un mes antes del inicio de las obras","origen":"IDAA","fase":"previa","faseOriginal":"Previo a Construcción"},{"codigo":"8.3","resumen":"Inicio de obras comunicado a Medio Ambiente (Junta CyL)","texto":"Se ha de poner en conocimiento el inicio de las obras a la Consejería de Medio Ambiente de la Junta de Castilla y León para que pueda tomar medidas pertinentes en los Planes de Prevención y Extinción de Incendios Comarcales o en los que consideren oportuno.","tipo":"MP","frecuencia":"Un mes antes del inicio de las obras","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"8.4","resumen":"Tránsito de maquinaria limitado a zonas delimitadas","texto":"Las zonas de tránsito de maquinaria se reducirán a las áreas delimitadas, evitando la degradación de zonas adyacentes y la eliminación o deterioro innecesario de la vegetación existente. Como medida protectora, las máquinas no podrán salirse de las vías de acceso para evitar dañar al máximo las manchas de vegetación natural.","tipo":"MP","frecuencia":"Semanal","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"8.5","resumen":"Sin derrames de aceites/lubricantes que afecten a la flora","texto":"Se ha de evitar cualquier derrame de sustancias contaminantes, tales como aceites y otros lubricantes de máquinas que puedan contaminar el suelo y, por tanto, impedir el desarrollo normal de la flora.","tipo":"MP","frecuencia":"Semanal","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"8.6","resumen":"Trazado de accesos minimiza afección a vegetación de mayor valor","texto":"El trazado de los accesos debe minimizar el paso por las teselas de vegetación de valor mayor, a la vez que se busca su diseño enlazando las teselas de menor valor representadas por los cultivos herbáceos extensivos y matorrales secundarios.","tipo":"MP","frecuencia":"Semanal","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"8.7","resumen":"Pantalla vegetal perimetral plantada (especies autóctonas)","texto":"Con el fin de disminuir la exposición visual de la planta y favorecer la creación de áreas de refugio y cría de la fauna, se propone la creación de una pantalla vegetal lineal. Esta pantalla se plantará en el interior del vallado, paralelo al mismo, en lado norte de la planta que tiene mayor exposición a la carretera CL-116 y a la localidad de Alentisque. Tendrá una longitud de unos 650 metros lineales. Deberán plantarse especies autóctonas adaptadas a las condiciones naturales de la zona de estudio, como por ejemplo encina (Quercus rotundifolia), quejigo (Quercus faginea), romero (Rosmarinus officinalis) y rosas silvestres (Rosa micrantha, Rosa pouzinii). Los plantones serán de al menos 2 savias y se plantarán a una distancia de 2 metros. Tendrán un mantenimiento durante los primeros 3 años y se repondrán las marras que se produzcan durante ese periodo que se estiman en un 30%.","tipo":"MCP","frecuencia":"Al final de la obra","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"8.8","resumen":"Vegetación natural favorecida entre filas de paneles; sin herbicidas","texto":"Se favorecerá el desarrollo, siempre que sea posible, de vegetación natural en los márgenes y en las calles intermedias entre filas de paneles mediante revegetación natural. Se evitará el uso de herbicidas para controlar la vegetación, empleando medios manuales o preferiblemente el pastoreo.","tipo":"MCP","frecuencia":"Al final de la obra","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"8.9.1","resumen":"Faja perimetral de protección contra incendios (30 m) mantenida","texto":"\"Aplicación del RD 893/2013, de 25 de noviembre por el que se aprueba la Directriz básica de planificación de protección civil de emergencia por incendios forestales: A fin de disminuir o romper la continuidad de los combustibles forestales se deberá asegurar la existencia de una faja perimetral de protección de 30 metros de ancho dentro de la misma propiedad, alrededor de la urbanización, edificación o instalación, medida desde el límite exterior de la edificación o instalación destinada a las personas, libre de vegetación seca y con la masa arbórea aclarada. Siempre que sea posible, esta faja deberá ser de, al menos, ocho veces la altura de la vegetación dominante.\"","tipo":"MP","frecuencia":"Semanal","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"8.9.2","resumen":"Medidas de autoprotección en Zonas de Alto Riesgo de incendio","texto":"Aplicación del RD 893/2013, de 25 de noviembre por el que se aprueba la Directriz básica de planificación de protección civil de emergencia por incendios forestales: En las zonas de alto riesgo (ZAR) de incendio declaradas por cada Comunidad Autónoma, será necesario adoptar medidas especiales de autoprotección pasiva de la edificación o instalación frente a posibles fuentes de ignición procedente de incendios forestales.","tipo":"MP","frecuencia":"Semanal","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"8.9.3","resumen":"Pistas cumplen características de servidumbre contraincendios","texto":"Aplicación del RD 893/2013, de 25 de noviembre por el que se aprueba la Directriz básica de planificación de protección civil de emergencia por incendios forestales: Las infraestructuras de servicio a las edificaciones o instalaciones incluidas en zonas de alto riesgo (ZAR) de incendio, tendrán, según lo establecido en el artículo 48.6 de la Ley 43/2003, de 21 de noviembre, servidumbre de uso para su utilización por los servicios de prevención y extinción de incendios. A estos efectos las pistas que se realicen habrán de reunir las siguientes características: • Ancho de la vía de cinco metros en viales con dirección en dos sentidos, y a tres metros en viales de sentido único. Se establecerá en estas vías la debida señalización de acuerdo con las normas de tráfico: • Radio mínimo de giro interior de las curvas: 5 metros. • Gálibo de seguridad de poda de árboles: 5 metros. • Pendiente de la vía: inferior al 12%, pudiendo llegar ocasionalmente al 20% como máximo. • Zonas de cambio de sentido para cada kilómetro de vía, debiendo ser de 200 metros cuadrados y 8 metros mínimo de largo.","tipo":"MP","frecuencia":"Semanal","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"8.9.4","resumen":"Sistemas de defensa contra incendios señalizados","texto":"Aplicación del RD 893/2013, de 25 de noviembre por el que se aprueba la Directriz básica de planificación de protección civil de emergencia por incendios forestales: Todos los sistemas de defensa contra incendios deberán estar adecuadamente señalizados, de acuerdo con la normativa en vigor.","tipo":"MP","frecuencia":"Semanal","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"8.10","resumen":"Afección a vegetación de lindes en zanjas minimizada","texto":"A la hora de realizar las zanjas, se minimizará su afección con la vegetación de las lindes evitando su afección y si fuese necesario de procederá a su restauración y mejora. De igual modo, los caminos públicos de paso para acceso a la instalación deberán mantenerse en perfectas condiciones de uso, evitando su deterioro, así como las ocupaciones que dificulten el tránsito o la funcionalidad de los mismos.","tipo":"MC","frecuencia":"Semanal","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"8.11","resumen":"Procedimiento constructivo respeta la vegetación existente","texto":"Durante las obras, se seleccionará el procedimiento de construcción que minimice la alteración de la capa superficial del suelo, respetando la vegetación existente, minimizando los movimientos de tierra en la superficie de la planta, así como los acopios de cualquier tipo de material y zonas auxiliares deberán disponerse dentro del perímetro del proyecto, fuera de las áreas naturales a conservar y evitando la evacuación de solidos por escorrentía superficial.","tipo":"MC","frecuencia":"Semanal","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"8.12","resumen":"Paneles instalados por hincado; vegetación bajo paneles conservada","texto":"La instalación de los paneles debe de realizarse mediante hincado, ocupando la mínima superficie de suelo posible. Respecto a la vegetación del sustrato bajo los paneles solares, deberán permitir el desarrollo de vegetación herbácea y arbustiva dejando una distancia al suelo de al menos 0,5 m que favorezca su presencia sin que esta interfiera con el correcto funcionamiento de la planta ni al mantenimiento o seguimiento de la misma.","tipo":"MC","frecuencia":"Semanal","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"8.13","resumen":"Plan de Autoprotección frente a incendios vigente y actualizado","texto":"Se deberá de disponer de un Plan de Autoprotección, estableciendo las actuaciones a desarrollar con los medios propios de que se dispongan, para los casos de emergencia por incendios forestales que puedan afectarles. Tendrá un mantenimiento, con comprobación periódica de los sistemas de alerta y avisos, actualización de medios y recursos, formalización y actualización del personal actuante, contemplando especialmente los simulacros.","tipo":"MP","frecuencia":"Mensual","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"}]},{"num":7,"nombre":"FAUNA","items":[{"codigo":"9.1","resumen":"Muestreo de fauna amenazada/nidificante realizado antes de obras","texto":"Se deberá realizar un muestreo de campo exhaustivo previo las obras de construcción del complejo solar en la zona de actuación y su área de influencia (en torno a 1 km), así como en las masas forestales circundantes o de ribera, con el fin de detectar posibles especies amenazadas de flora y de fauna para identificar la posibilidad de aves nidificando en la zona y en sus inmediaciones por si hay que establecer medidas preventivas adicionales, debiendo comunicarse al Servicio Provincial de Medio Ambiente de Soria de la Junta de Castilla y León.","tipo":"MP","frecuencia":"Un mes antes del inicio de las obras","origen":"IDAA","fase":"previa","faseOriginal":"Previo a Construcción"},{"codigo":"9.2","resumen":"Obras fuera de época de reproducción (abr-jun) o cría descartada","texto":"Las obras se realizarán fuera de la época de reproducción de la fauna, principalmente entre los meses de abril y junio, si bien se podrán realizar trabajos fuera de esa época siempre que durante el seguimiento ambiental de la obra se constate que no crían especies protegidas o de interés en un radio de 1 km de la zona de instalación. (Inf. IDAA: Se respetará el periodo de nidificación para aquellos trabajos que puedan incidir en la avifauna, presentando un plan de trabajo que minimice su afección, estableciendo un calendario de obras se fijará en coordinación con el Servicio Territorial de Medio Ambiente).\"","tipo":"MP","frecuencia":"Un mes antes del inicio de las obras semanal durante la época de cría","origen":"EsIA   \n IDAA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"9.3","resumen":"Vallado con malla cinegética ≥15 cm y aperturas para fauna","texto":"El vallado perimetral de la planta se realizará con valla cinegética con una luz de malla de al menos 15 cm. Se realizarán aperturas a ras de suelo en forma de rectángulos de 30 cm en sentido horizontal y 20 cm en sentido vertical enmarcado por listones de hacer corrugado cada 200 metros. (Inf. IDAA: En relación con el vallado y con objeto de garantizar un adecuado nivel de permeabilidad, deberían instalarse pasos de fauna a lo largo de todo el perímetro del vallado. Se proponen aperturas de éste a ras de suelo en forma de rectángulos de 30 cm en sentido horizontal y 20 cm en sentido vertical, enmarcado por listones de acero corrugado, cada 200 m, evitando la cimentación en todo caso). \"","tipo":"MC","frecuencia":"Semanal durante la construcción del vallado","origen":"EsIA    IDAA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"9.4","resumen":"Vallado no enterrado; permite paso de pequeños vertebrados","texto":"El vallado se realizará de tal forma que no impida el tránsito de la fauna silvestre. No se enterrará el mallado para permitir el paso de pequeños vertebrados. Se evitará la cementación de bloque de hormigón en la parte inferior de la malla para permitir a ciertos mamíferos excavar pasos que comuniquen el exterior con el interior.","tipo":"MC","frecuencia":"Semanal durante la construcción del vallado","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"9.5","resumen":"Sin materiales peligrosos en el vallado (vidrios, espinos, puntas)","texto":"Se prohíbe expresamente la incorporación de materiales o soluciones potencialmente peligrosas como vidrios, espinos, filos y puntas.","tipo":"MC","frecuencia":"Semanal durante la construcción del vallado","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"9.6","resumen":"Vallado señalizado con elementos de alta visibilidad para aves","texto":"El vallado se señalizará con elementos de alta visibilidad, prioritariamente naturales, para evitar la colisión de las aves. Dispondrá en todo su trazado de señales reflectantes intercaladas en la malla cada 10 metros para así disminuir la posibilidad de impactos de la avifauna. (Inf. IA: Se instalarán pequeñas placas de color claro cada 10 metros del vallado y de la subestación para aumentar su visibilidad).","tipo":"MC","frecuencia":"Semanal durante la construcción del vallado","origen":"EsIA    IDAA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"9.7","resumen":"Bandas anticolisión en paneles instaladas","texto":"Se recomienda el uso de bandas sobre los paneles fotovoltaicos en forma de rejilla que minimicen la mortalidad de insectos y los posibles impactos de pequeñas aves. Sería recomendable que no todos los paneles se recubrieran con el fin de profundizar en el análisis de las afecciones, con el fin de evaluar los efectos a lo largo de los primeros años estableciéndolos en el programa de vigilancia ambiental.","tipo":"MC","frecuencia":"Durante la fase de colocación de los paneles","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"9.8","resumen":"Manchas de vegetación natural con refugios (bug-hotel) conservadas","texto":"Se mantendrá o favorecerá el desarrollo, siempre que sea posible, de vegetación natural en los márgenes y en las calles intermedias entre filas de paneles. (Inf. IDAA: Se dejarán tres manchas de 100 m2 distribuidas por distintas zonas de los módulos fotovoltaicos donde existe vegetación natural que no se va a tocar y en cada mancha se instalarán estructuras tipo bug-hotel a modo de refugios para favorecer a los polinizadores. El seguimiento de estas manchas se incluirá en el Plan de Seguimiento y Vigilancia Ambiental).","tipo":"MC","frecuencia":"Al final de la obra","origen":"EsIA   \n IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"9.9","resumen":"Sin herbicidas; desbrozadora o pastoreo priorizado","texto":"Dentro de la planta solar se procurará evitar la utilización de herbicidas para controlar la vegetación. Se recomienda el empleo de desbrozadora o pastoreo, priorizando siempre que sea posible el pastoreo.","tipo":"MC","frecuencia":"Al final de la obra Mensual","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción y explotación"}]},{"num":8,"nombre":"PATRIMONIO CULTURAL","items":[{"codigo":"10.3","resumen":"Vías pecuarias delimitadas y señalizadas","texto":"Se delimitarán y señalizarán las vías pecuarias existentes en la zona, evitando la afección a su trazado.","tipo":"MP","frecuencia":"Al inicio de la obra y semanal","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"10.4","resumen":"Sin ocupación de vías pecuarias sin autorización","texto":"Se vigilará que no se ocupe ninguna vía pecuaria sin permiso concedido por el Servicio Territorial de Medio Ambiente de Junta de Castilla y León.","tipo":"MP","frecuencia":"Al inicio de la obra Semanal","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"10.5","resumen":"Estado y uso ganadero de vías pecuarias garantizado","texto":"En relación a las vías pecuarias, deberán garantizarse el mantenimiento del correcto estado de estos bienes de dominio público, y que no se vea interrumpido el paso ganadero en ningún momento, tanto en explotación como en obra, así como garantizar los demás usos compatibles y complementarios según se recogen en la Ley 3/1995, de 23 de marzo, de Vías Pecuarias.","tipo":"MP","frecuencia":"Semanal","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"}]},{"num":9,"nombre":"SOCIOECONOMÍA","items":[{"codigo":"11.1","resumen":"Transportes en horas de menor tráfico","texto":"Se procurará que los trasportes por carretera se realicen en las horas de menor intensidad de tráfico.","tipo":"MP","frecuencia":"Semanal y al final de la obra.","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"11.2","resumen":"Mojones y señales de delimitación de fincas/cotos/montes respetados","texto":"Durante la fase de obras se señalizarán los mojones y señales de delimitación de fincas, cotos, montes etc.","tipo":"MP","frecuencia":"Al inicio de la obra y semanal","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"11.3","resumen":"Vías pecuarias delimitadas y señalizadas","texto":"Se delimitarán y señalizarán las vías pecuarias existentes en la zona, evitando la afección a su trazado.","tipo":"MP","frecuencia":"Al inicio de la obra y semanal","origen":"EsIA","fase":"construccion","faseOriginal":"Construcción"}]},{"num":10,"nombre":"PAISAJE","items":[{"codigo":"12.1","resumen":"Pantalla vegetal interior del cerramiento plantada","texto":"Para mitigación del impacto visual se colocará una pantalla vegetal en el lado interior del cerramiento, de la misma altura del vallado y un espesor aproximado de 0,5 m. Las especies de plantas/arbolado para la realización de esta pantalla serán perennes y de especies autóctonas. (Inf. IDAA: Para asegurar un adecuado nivel de conectividad y favorecer al paisaje, se retranqueará el vallado 5 m hacia el interior de todo su perímetro llevándose a cabo la plantación de una franja de especies forestales a una densidad de 1.000 plantas/ha, de plantas de 2 savias, en contenedor de al menos 300 cm3 y protector de 50 cm de altura. La composición estaría formada por especies vegetales de la zona y aprobado por el Servicio Territorial de Medio Ambiente de Soria. Se deberá mantener en adecuado estado vegetativo para que cumpla con el objetivo de ser un corredor verde. El material forestal debe de cumplir con lo establecido en el Decreto 54/2007, de 24 de mayo, por el que se regula la comercialización de los materiales forestales de reproducción en la Comunidad de Castilla y León).","tipo":"MC","frecuencia":"Al final de la obra","origen":"EsIA    IDAA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"12.2","resumen":"Partida económica de desmantelamiento y restauración prevista","texto":"Se deberá de fijar una partida económica que cubra los gastos derivados del desmantelamiento de las instalaciones y el reacondicionamiento visual de la zona de implantación. (Inf. IDAA: Se presentará un Plan de Desmantelamiento y Restauración de los terrenos afectados por la planta fotovoltaica una vez finalice el periodo de vida útil de la planta, para que las afecciones que plantean se minimicen y sean temporales. Dicho plan deberá presentarse antes de finalizar la obra como máximo, incluyendo el compromiso de su realización por parte del promotor).","tipo":"MCP","frecuencia":"Previo al final de la obra","origen":"EsIA    IDAA","fase":"construccion","faseOriginal":"Construcción"},{"codigo":"12.3","resumen":"Plantaciones en época adecuada (oct-abr), con mantenimiento","texto":"Las plantaciones se realizarán en función de la climatología, entre los meses de octubre y abril y se deberá garantizar el mantenimiento (riegos, podas, etc.) de la misma durante la vida útil de la instalación. Se deberán reponer las marras producidas al año siguiente de la misma durante al menos los 10 primeros años de la plantación, admitiéndose unas marras de un máximo de un 10% del total de la planta o siempre que no se consiga el efecto de apantallamiento o de corredor con la vegetación superviviente. Este seguimiento deberá estar contemplado en el Plan de Vigilancia.","tipo":"MC","frecuencia":"Al final de la obra y periódico durante la explotación (al menos los 10 primeros años desde la ejecución de las plantaciones)","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"12.4","resumen":"Cajas nido / refugios para fauna instalados; majanos mantenidos","texto":"Para favorecer la utilización y relativa naturalización de la superficie vallada se procederá a la colocación en el entorno vallado o en otros puntos de la superficie de la planta de cajas nido, refugios para quirópteros u otro tipo de refugios para la fauna. Además, se procederá al mantenimiento de majanos existentes en la zona, que presenten vegetación arbórea y arbustiva, para mantener la biodiversidad de la zona.","tipo":"MCP","frecuencia":"Al final de la obra y durante la explotación","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"12.5","resumen":"Restauración de superficies temporales afectadas","texto":"La restauración deberá ir encaminada a la recuperación de las superficies temporales afectadas, especialmente las formaciones vegetales formadas por especies leñosas y hábitat de interés comunitario.","tipo":"MC","frecuencia":"Al final de la obra","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"}]},{"num":11,"nombre":"SEGUIMIENTO AMBIENTAL DEL PROYECTO","items":[{"codigo":"13.1","resumen":"Documento de cumplimiento de medidas de restauración (previo a explotación)","texto":"Tras las obras, antes del inicio de la actividad y dentro del primer informe del plan de vigilancia ambiental, se deberá elaborar un documento acerca del grado de cumplimiento de las medidas de restauración propuestas en el estudio de impacto ambiental, en aspectos tales como la gestión de las tierras (desbroces, acopios y almacenamiento de la tierra vegetal, preparación de suelo) y la regeneración de la vegetación en la planta fotovoltaica.","tipo":"MS","frecuencia":"Previo al inicio de la actividad","origen":"IDAA","fase":"construccion","faseOriginal":"Posterior a la construcción y previa a la explotación"},{"codigo":"13.2","resumen":"Impactos no previstos comunicados al órgano competente","texto":"Si durante las actuaciones asociadas al presente proyecto se detectase algún impacto no analizado o cuya magnitud fuera superior a la evaluada se comunicará dicha circunstancia al órgano autonómico competente para la determinación de la forma de proceder.","tipo":"MS","frecuencia":"Cuando se detecte el impacto","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"13.3","resumen":"Coordinación con las medidas de la parte eólica del proyecto","texto":"Al tratarse de un proyecto de hibridación, las medidas y condiciones deben ir acordes en su conjunto, coordinadas y relacionadas en lo posible con las establecidas para la parte eólica del proyecto.","tipo":"MS","frecuencia":"Mensual","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"13.4","resumen":"Medidas definidas y presupuestadas por el promotor","texto":"Cada una de las medidas establecidas en el Estudio de impacto ambiental y en la Resolución del Informe de Determinación de Afección Ambiental deberán estar definidas y presupuestadas por el promotor en el proyecto o en una adenda al mismo, previamente a su aprobación. Será imprescindible un correcto desarrollo del Plan de Vigilancia Ambiental tanto en lo relacionado con las distintas fases del proyecto como con las medidas en él establecidas, relativas a periodos, plazos y seguimientos previstos.","tipo":"MS","frecuencia":"Previo al inicio de la actividad","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"},{"codigo":"13.5","resumen":"Modificaciones significativas notificadas a la Administración","texto":"Toda modificación significativa sobre las características de las actuaciones proyectadas, que pudiera producirse con posterioridad, deberá ser notificada a la Subdirección General de Calidad y Evaluación Ambiental que dictará su conformidad si procede, sin perjuicio de las licencias o permisos que, en su caso, correspondan.","tipo":"MS","frecuencia":"Cuando se produzca la modificación","origen":"IDAA","fase":"construccion","faseOriginal":"Construcción y explotación"}]}];
 
 </script>
 <script>
 /* =========================================================================
    Exportación a Word — replica exacta de la plantilla aprobada
-   (Modelo_Ficha_Seguimiento_DAO.docx / build.js) usando docx@7.8.2 (CDN).
+   (Modelo_Ficha_Seguimiento_DAO.docx / build.js) usando docx@9.6.1 (CDN),
+   con las fotos de campo incrustadas en la tabla de cada apartado.
    ========================================================================= */
 
 const VERDE = "8DC63F";
@@ -222,6 +237,8 @@ const S9=18,S10=20,S10_5=21,S11=22,S12=24,S20=40;
 const cmToPx = cm => Math.round(cm * 96 / 2.54);
 const ENGIE_PX  = { w: cmToPx(3.3), h: cmToPx(1.31) };
 const ARTESA_PX = { w: cmToPx(3.0), h: cmToPx(1.28) };
+const FOTO_ALTO_PX = cmToPx(8);      // alto fijo de las fotos de campo en el acta (fotos verticales)
+const FOTO_ANCHO_MAX_PX = cmToPx(7.2); // ancho máx. dentro de su columna, por si la foto no es vertical
 
 function b64ToUint8(b64){
   const bin = atob(b64);
@@ -243,9 +260,31 @@ function estadoBadge(estado){
   return map[estado] || map.na;
 }
 
-async function generarWord(visita){
-  if(!window.docx){ toast("No se ha podido cargar el generador de Word."); return; }
-  toast("Generando documento Word…");
+function loadImageNaturalSize(dataUrl){
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve({ width: img.naturalWidth || 400, height: img.naturalHeight || 300 });
+    img.onerror = () => resolve({ width: 400, height: 300 });
+    img.src = dataUrl;
+  });
+}
+// Escala una foto de campo (normalmente vertical) a un alto fijo, limitando
+// el ancho al hueco disponible en su columna de la tabla por si la foto no
+// fuese vertical.
+function fitByHeight(w, h, targetH, maxW){
+  let scale = targetH / h;
+  let width = w * scale, height = targetH;
+  if(width > maxW){ scale = maxW / w; width = maxW; height = Math.round(h*scale); }
+  return { width: Math.max(1,Math.round(width)), height: Math.max(1,Math.round(height)) };
+}
+
+function actaFilename(visita){
+  const fecha = (visita.fecha||"").replace(/-/g,"");
+  return `Acta_visita_${String(visita.nVisita).padStart(2,"0")}_${fecha}.docx`;
+}
+
+async function buildVisitaDocxBlob(visita){
+  if(!window.docx) throw new Error("docx-lib-not-loaded");
   const {
     Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
     WidthType, ShadingType, BorderStyle, AlignmentType, HeadingLevel,
@@ -264,6 +303,7 @@ async function generarWord(visita){
       verticalAlign: VerticalAlign.CENTER,
       margins: { top:70, bottom:70, left:90, right:90 },
       borders: opts.borders,
+      columnSpan: opts.colSpan,
     });
   }
   const thinBorder = { style: BorderStyle.SINGLE, size: 2, color: LINE };
@@ -319,7 +359,7 @@ async function generarWord(visita){
     return new Table({ width:{size:9026,type:WidthType.DXA}, columnWidths:[6300,2726], rows:[header, ...rows] });
   }
 
-  function temaSection(t){
+  async function temaSection(t){
     const items = itemsForFaseDoc(visita.detalle[t.num] || [], visita.fase);
     const barra = new Paragraph({
       shading: { type: ShadingType.CLEAR, fill: VERDE },
@@ -335,7 +375,62 @@ async function generarWord(visita){
         cell(new Paragraph({children:[run("Observaciones de la visita",{bold:true,size:S9,color:INK_MUTED})]}), {width:3026, bg:HEAD_BG, borders:cellBorders}),
       ],
     });
-    const rows = items.map(it => {
+
+    // Fila(s) de fotos de una medida: la 1ª columna repite el código de la
+    // medida y el resto del ancho de la tabla se reparte en dos columnas
+    // iguales, una foto (vertical, 8 cm de alto) por columna. Si hay más de
+    // dos fotos se añaden tantas filas como hagan falta.
+    const noPhotoCellBorder = {style:BorderStyle.NONE};
+    const photoInnerBorders = {top:noPhotoCellBorder,bottom:noPhotoCellBorder,left:noPhotoCellBorder,right:noPhotoCellBorder};
+    async function fotoCellContent(foto){
+      try{
+        const natural = await loadImageNaturalSize(foto.dataUrl);
+        const box = fitByHeight(natural.width, natural.height, FOTO_ALTO_PX, FOTO_ANCHO_MAX_PX);
+        return [
+          new Paragraph({ alignment: AlignmentType.CENTER, children:[
+            new ImageRun({ data: b64ToUint8(foto.dataUrl.split(",")[1]), transformation:{width:box.width,height:box.height}, type:"jpg" }),
+          ]}),
+        ];
+      }catch(e){
+        console.error("no se pudo incrustar foto", e);
+        return [ new Paragraph({children:[run("(no se ha podido cargar la foto)", {size:S9, color:BAD_TX})]}) ];
+      }
+    }
+    async function fotoRowsForItem(it){
+      const fotos = it.fotos || [];
+      const out = [];
+      for(let i=0;i<fotos.length;i+=2){
+        const pair = fotos.slice(i, i+2);
+        const contents = [];
+        for(const f of pair) contents.push(await fotoCellContent(f));
+        const innerCells = [ new TableCell({
+          children: contents[0], width:{size:4163,type:WidthType.DXA},
+          verticalAlign: VerticalAlign.CENTER, margins:{top:60,bottom:60,left:60,right:60},
+          borders: photoInnerBorders,
+        }) ];
+        innerCells.push(new TableCell({
+          children: contents[1] || [new Paragraph({children:[run("")]})],
+          width:{size:4163,type:WidthType.DXA},
+          verticalAlign: VerticalAlign.CENTER, margins:{top:60,bottom:60,left:60,right:60},
+          borders: photoInnerBorders,
+        }));
+        const innerTable = new Table({
+          width:{size:8326,type:WidthType.DXA}, columnWidths:[4163,4163],
+          rows:[ new TableRow({ children: innerCells }) ],
+        });
+        const codeCell = cell(new Paragraph({children:[run(it.codigo,{bold:true,size:S9,color:VERDE_OSC})]}), {width:700, borders:cellBorders, colSpan:1});
+        const photosCell = new TableCell({
+          children:[ innerTable ], width:{size:8326,type:WidthType.DXA}, columnSpan:3,
+          verticalAlign: VerticalAlign.CENTER, margins:{top:70,bottom:70,left:90,right:90},
+          borders: cellBorders,
+        });
+        out.push(new TableRow({ children: [ codeCell, photosCell ] }));
+      }
+      return out;
+    }
+
+    const rows = [];
+    for(const it of items){
       const b = estadoBadge(it.estado);
       const obsParas = [ new Paragraph({children:[run(it.obs||"",{size:S9})]}) ];
       if(it.correctora){
@@ -344,13 +439,17 @@ async function generarWord(visita){
           run(it.correctora, {italics:true, size:S9, color:BAD_TX}),
         ]}));
       }
-      return new TableRow({ children: [
+      rows.push(new TableRow({ children: [
         cell(new Paragraph({children:[run(it.codigo,{bold:true,size:S9,color:VERDE_OSC})]}), {width:700, borders:cellBorders}),
         cell(new Paragraph({children:[run(it.resumen,{size:S9})]}), {width:3900, borders:cellBorders}),
         cell(new Paragraph({children:[run(b.label,{bold:true,size:S9,color:b.tx})], alignment:AlignmentType.CENTER}), {width:1400, bg:b.bg, borders:cellBorders}),
         cell(obsParas, {width:3026, borders:cellBorders}),
-      ]});
-    });
+      ]}));
+      if((it.fotos||[]).length){
+        const fRows = await fotoRowsForItem(it);
+        rows.push(...fRows);
+      }
+    }
     const table = new Table({ width:{size:9026,type:WidthType.DXA}, columnWidths:[700,3900,1400,3026], rows:[header, ...rows] });
     return [barra, table];
   }
@@ -368,14 +467,14 @@ async function generarWord(visita){
     new Paragraph({ spacing:{before:60,after:60}, children: [
       new ImageRun({ data: b64ToUint8(LOGO_ENGIE_B64), transformation:{width:ENGIE_PX.w,height:ENGIE_PX.h}, type:"jpg" }),
     ]}),
-    new Paragraph({ children:[ run(CONFIG.PROMOTOR, {bold:true, size:S9, color:INK}) ] }),
-  ], {width:4513, borders:noBorderSet});
+    new Paragraph({ children:[ run(CONFIG.PROMOTOR, {size:S9, color:INK}) ] }),
+  ], {width:4513, borders:cellBorders});
 
   const artesaCell = cell([
     new Paragraph({ alignment: AlignmentType.RIGHT, children: [
       new ImageRun({ data: b64ToUint8(LOGO_ARTESA_B64), transformation:{width:ARTESA_PX.w,height:ARTESA_PX.h}, type:"jpg" }),
     ]}),
-  ], {width:4513, borders:noBorderSet});
+  ], {width:4513, borders:cellBorders});
 
   children.push(new Table({
     width:{size:9026,type:WidthType.DXA}, columnWidths:[4513,4513],
@@ -428,7 +527,10 @@ async function generarWord(visita){
   children.push(tit("Apartados del Plan de Vigilancia Ambiental", {heading:HeadingLevel.HEADING_3, before:280, after:100}));
   children.push(resumenApartadosTable());
 
-  for(const t of ok) children.push(...temaSection(t));
+  for(const t of ok){
+    const section = await temaSection(t);
+    children.push(...section);
+  }
 
   children.push(tit("Observaciones generales de la visita", {heading:HeadingLevel.HEADING_3, before:320, after:100}));
   children.push(new Paragraph({
@@ -477,29 +579,59 @@ async function generarWord(visita){
     }],
   });
 
+  return Packer.toBlob(doc);
+}
+
+// Genera el Word y lo guarda en el dispositivo (descarga clásica, o la
+// capacidad "downloads" de Claude dentro de la vista previa). No sube nada
+// a Drive — eso lo hace, además, la sincronización con Google.
+async function generarWord(visita){
+  toast("Generando documento Word…");
   try{
-    const blob = await Packer.toBlob(doc);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    const fecha = (visita.fecha||"").replace(/-/g,"");
-    a.href = url;
-    a.download = `Acta_visita_${String(visita.nVisita).padStart(2,"0")}_${fecha}.docx`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url), 5000);
-    toast("Documento Word generado.");
+    const blob = await buildVisitaDocxBlob(visita);
+    await saveDocxBlob(blob, actaFilename(visita));
   }catch(e){
     console.error(e);
     toast("Ha ocurrido un error generando el Word.");
   }
 }
 
+// Guarda el .docx generado. Dentro de una vista previa de Claude (Artifact),
+// los enlaces de descarga normales no funcionan, así que usamos la
+// capacidad "downloads" de la plataforma si está disponible; fuera de
+// Claude (la app real, publicada en GitHub Pages) usamos la descarga
+// clásica del navegador.
+async function saveDocxBlob(blob, filename){
+  if(window.claude && typeof window.claude.use === "function"){
+    let downloads = null;
+    try{ downloads = await window.claude.use("downloads"); }catch(e){ downloads = null; }
+    if(downloads){
+      try{
+        await downloads.save({ filename, data: blob });
+        toast("Documento Word generado.");
+      }catch(e){
+        if(e && e.code === "declined"){ toast("Descarga cancelada."); }
+        else{ console.error(e); toast("No se ha podido guardar el archivo."); }
+      }
+      return;
+    }
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url), 5000);
+  toast("Documento Word generado.");
+}
+
 </script>
 <script>
 /* =========================================================================
    Autenticación con Google (Identity Services) y sincronización con
-   Google Sheets (hoja de consolidación) y Google Drive (fotos).
+   Google Sheets (hoja de consolidación), Drive/Fotos y Drive/Actas (Word).
    ========================================================================= */
 
 let tokenClient = null;
@@ -546,7 +678,7 @@ function googleSignIn(){
         STATE.user = { name:"", email:"", picture:"" };
       }
       loadVisitas();
-      goto("home");
+      goto("inicio");
       resolve();
     };
     tokenClient.requestAccessToken({ prompt: STATE.user ? "" : "consent" });
@@ -579,13 +711,14 @@ async function getFirstSheetName(token){
   return cachedSheetName;
 }
 
-async function uploadPhotoToDrive(token, dataUrl, filename){
-  const base64Data = dataUrl.split(",")[1];
-  const metadata = { name: filename, parents: [CONFIG.DRIVE_FOLDER_ID], mimeType: "image/jpeg" };
+// Sube un archivo (dado como base64 "puro", sin el prefijo data:...;base64,)
+// a una carpeta de Drive. Devuelve {id, webViewLink}.
+async function uploadBase64ToDrive(token, base64Data, filename, mimeType, folderId){
+  const metadata = { name: filename, parents: [folderId], mimeType };
   const boundary = "artesa_dao_" + Date.now() + "_" + Math.random().toString(36).slice(2);
   const body =
     `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n` +
-    `--${boundary}\r\nContent-Type: image/jpeg\r\nContent-Transfer-Encoding: base64\r\n\r\n${base64Data}\r\n` +
+    `--${boundary}\r\nContent-Type: ${mimeType}\r\nContent-Transfer-Encoding: base64\r\n\r\n${base64Data}\r\n` +
     `--${boundary}--`;
   const res = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink", {
     method: "POST",
@@ -594,6 +727,26 @@ async function uploadPhotoToDrive(token, dataUrl, filename){
   });
   if(!res.ok) throw new Error("drive-upload-failed-"+res.status);
   return res.json();
+}
+
+function blobToBase64(blob){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => resolve(String(reader.result).split(",")[1]);
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function uploadPhotoToDrive(token, dataUrl, filename){
+  const base64Data = dataUrl.split(",")[1];
+  return uploadBase64ToDrive(token, base64Data, filename, "image/jpeg", CONFIG.FOTOS_FOLDER_ID);
+}
+
+async function uploadActaToDrive(token, blob, filename){
+  const base64Data = await blobToBase64(blob);
+  const mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+  return uploadBase64ToDrive(token, base64Data, filename, mimeType, CONFIG.ACTAS_FOLDER_ID);
 }
 
 async function appendRowsToSheet(token, rows){
@@ -641,10 +794,24 @@ async function syncVisita(visita){
       }
     }
     await appendRowsToSheet(token, rows);
+
+    // Genera el acta en Word (con las fotos incrustadas) y la sube a la
+    // carpeta de Drive de actas, para que quede centralizada para todo el equipo.
+    let actaFallo = false;
+    try{
+      const blob = await buildVisitaDocxBlob(visita);
+      await uploadActaToDrive(token, blob, actaFilename(visita));
+    }catch(e){
+      console.error("no se pudo subir el acta a Drive", e);
+      actaFallo = true;
+    }
+
     visita.syncStatus = "synced";
     persistCurrent();
-    toast("Ficha sincronizada correctamente.");
-    goto("home");
+    toast(actaFallo
+      ? "Ficha sincronizada, pero el acta en Word no se ha podido subir a Drive."
+      : "Ficha sincronizada correctamente (datos, fotos y acta en Word).");
+    goto("historial");
   }catch(e){
     console.error(e);
     visita.syncStatus = "error";
@@ -661,13 +828,20 @@ async function syncVisita(visita){
    DAO FV Alentisque — App de seguimiento ambiental en fase de construcción
    Una visita = una ficha. Los apartados aplicables se eligen por visita y
    se filtran según la fase (previa a construcción / construcción).
+
+   Estructura de navegación (misma que Cuaderno de Campo / Censos de Aves):
+   Inicio (Módulos disponibles + Configuración)
+     └─ Fichas de seguimiento (único módulo)
+          ├─ Nueva ficha → Datos → Apartados → Checklist (por tema) → Revisión
+          └─ Historial (fichas guardadas)
+     └─ Ajustes (Configuración)
    ========================================================================= */
 
 const LS_KEY = "dao_alentisque_visitas_v1";
 const LS_PROFILE = "dao_alentisque_perfil_v1";
 
 const STATE = {
-  view: "login",
+  view: "inicio",
   user: null,          // {name, email, picture}
   accessToken: null,   // Google OAuth access token (memoria, no se persiste)
   tokenExpiry: 0,
@@ -801,61 +975,126 @@ function countCountsForVisita(visita){
 /* ---------------------------------------------------------------------- */
 function render(){
   window.scrollTo(0,0);
-  if(STATE.view === "login") return renderLogin();
-  if(STATE.view === "home") return renderHome();
+  if(STATE.view === "inicio") return renderInicio();
+  if(STATE.view === "menu-fichas") return renderMenuFichas();
+  if(STATE.view === "historial") return renderHistorial();
+  if(STATE.view === "ajustes") return renderAjustes();
   if(STATE.view === "datos") return renderDatos();
   if(STATE.view === "apartados") return renderApartados();
   if(STATE.view === "checklist") return renderChecklist();
   if(STATE.view === "revision") return renderRevision();
-  if(STATE.view === "settings") return renderSettings();
 }
 
 function goto(view){ STATE.view = view; render(); }
 
 /* ---------------------------------------------------------------------- */
-/* Vista: Login                                                            */
+/* Cabecera común — mismo patrón que Cuaderno de Campo / Censos de Aves:   */
+/* un único botón de contexto (⌂ Inicio en pantallas de menú, ← Menú en   */
+/* pantallas de contenido), más una flecha de paso opcional en el         */
+/* asistente de la ficha.                                                  */
 /* ---------------------------------------------------------------------- */
-function renderLogin(){
-  el.innerHTML = `
-    <div class="login-wrap">
-      <img class="logo" src="data:image/jpeg;base64,${LOGO_ARTESA_B64}" alt="ARTESA">
-      <h2>Seguimiento ambiental DAO</h2>
-      <p>${escapeHtml(CONFIG.PROYECTO)}<br><span class="muted">Fichas de visita del Plan de Vigilancia Ambiental — fase de obra.</span></p>
-      <button class="btn btn-primary" id="btn-login" style="max-width:260px;">Continuar con Google</button>
-      <p class="small" style="margin-top:22px;max-width:280px;">Inicia sesión con la cuenta de Google del equipo para poder sincronizar las fichas con la hoja de cálculo y la carpeta compartidas.</p>
-      <button class="btn btn-secondary" id="btn-offline" style="max-width:260px;margin-top:8px;">Usar sin conectar (solo en este móvil)</button>
-    </div>`;
-  $("#btn-login").addEventListener("click", googleSignIn);
-  $("#btn-offline").addEventListener("click", () => {
-    STATE.user = null;
-    loadVisitas();
-    goto("home");
-  });
+function cabeceraHtml(title, sub, opts={}){
+  const accion = opts.mode === "inicio" ? `<button class="cab-btn" id="btn-cab-inicio">⌂ Inicio</button>`
+    : opts.mode === "menu" ? `<button class="cab-btn" id="btn-cab-menu">← Menú</button>`
+    : "";
+  return `<div class="topbar">
+    ${opts.back ? `<button class="back" id="btn-back">←</button>` : ""}
+    <h1>${title}${sub?`<span class="sub">${sub}</span>`:""}</h1>
+    ${accion}
+  </div>`;
+}
+function wireCabecera(){
+  const bi = $("#btn-cab-inicio");
+  if(bi) bi.addEventListener("click", () => { persistCurrent(); goto("inicio"); });
+  const bm = $("#btn-cab-menu");
+  if(bm) bm.addEventListener("click", () => { persistCurrent(); goto("menu-fichas"); });
 }
 
 /* ---------------------------------------------------------------------- */
-/* Vista: Home                                                             */
+/* Vista: Inicio — Módulos disponibles + Configuración                     */
 /* ---------------------------------------------------------------------- */
-function renderHome(){
+function renderInicio(){
+  el.innerHTML = `
+    ${cabeceraHtml("Seguimiento DAO", "FV Alentisque 50 MWp")}
+    <div class="container" style="padding-top:16px;">
+      <div class="inicio-logo">
+        <img src="data:image/jpeg;base64,${LOGO_ARTESA_B64}" alt="ARTESA">
+        <p class="muted small">${escapeHtml(CONFIG.PROYECTO)}</p>
+      </div>
+
+      <div class="menu-section-title">Módulos disponibles</div>
+      <button class="menu-btn" id="btn-modulo-fichas">
+        <div class="menu-btn-ico">📋</div>
+        <div class="menu-btn-txt">
+          <strong>Fichas de seguimiento</strong>
+          <span>Actas de visita del Plan de Vigilancia Ambiental</span>
+        </div>
+      </button>
+
+      <div class="menu-section-title">Configuración</div>
+      <button class="menu-btn" id="btn-modulo-ajustes">
+        <div class="menu-btn-ico">⚙️</div>
+        <div class="menu-btn-txt">
+          <strong>Ajustes</strong>
+          <span>Cuenta de Google, hoja de cálculo y carpetas de Drive</span>
+        </div>
+      </button>
+    </div>
+  `;
+  $("#btn-modulo-fichas").addEventListener("click", () => goto("menu-fichas"));
+  $("#btn-modulo-ajustes").addEventListener("click", () => goto("ajustes"));
+}
+
+/* ---------------------------------------------------------------------- */
+/* Vista: Menú del módulo Fichas — Nueva ficha / Historial                 */
+/* ---------------------------------------------------------------------- */
+function renderMenuFichas(){
+  const n = STATE.visitas.length;
+  const sub = n === 0 ? "Sin fichas guardadas" : `${n} ficha${n>1?"s":""} guardada${n>1?"s":""}`;
+  el.innerHTML = `
+    ${cabeceraHtml("Fichas de seguimiento", "Seguimiento DAO", {mode:"inicio"})}
+    <div class="container" style="padding-top:16px;">
+      <div class="menu-section-title">Formulario</div>
+      <button class="menu-btn" id="btn-nueva-ficha">
+        <div class="menu-btn-ico">📝</div>
+        <div class="menu-btn-txt">
+          <strong>Nueva ficha</strong>
+          <span>Registrar una nueva visita de seguimiento</span>
+        </div>
+      </button>
+
+      <div class="menu-section-title">Datos</div>
+      <button class="menu-btn" id="btn-historial">
+        <div class="menu-btn-ico">🗂️</div>
+        <div class="menu-btn-txt">
+          <strong>Historial</strong>
+          <span>${sub}</span>
+        </div>
+      </button>
+    </div>
+  `;
+  wireCabecera();
+  $("#btn-nueva-ficha").addEventListener("click", () => {
+    STATE.current = newVisita();
+    goto("datos");
+  });
+  $("#btn-historial").addEventListener("click", () => goto("historial"));
+}
+
+/* ---------------------------------------------------------------------- */
+/* Vista: Historial de fichas                                              */
+/* ---------------------------------------------------------------------- */
+function renderHistorial(){
   const rows = STATE.visitas.slice().sort((a,b)=>b.createdAt-a.createdAt);
   el.innerHTML = `
-    <div class="brandbar">
-      <img src="data:image/jpeg;base64,${LOGO_ARTESA_B64}" alt="ARTESA">
-      <button class="pill-btn" id="btn-settings">⚙ Ajustes</button>
-    </div>
-    <div class="container" style="padding-top:4px;">
-      <div class="section-title" style="margin-top:2px;">Visitas de seguimiento</div>
+    ${cabeceraHtml("Historial", "Fichas de seguimiento", {mode:"menu"})}
+    <div class="container" style="padding-top:16px;">
       <div id="lista-visitas">
         ${rows.length ? rows.map(v => visitaRowHtml(v)).join("") : emptyStateHtml()}
       </div>
     </div>
-    <div class="fab"><button id="btn-nueva">+</button></div>
   `;
-  $("#btn-settings").addEventListener("click", () => goto("settings"));
-  $("#btn-nueva").addEventListener("click", () => {
-    STATE.current = newVisita();
-    goto("datos");
-  });
+  wireCabecera();
   $$(".visita-item").forEach(node => {
     node.addEventListener("click", () => {
       const v = STATE.visitas.find(x => x.id === node.dataset.id);
@@ -869,7 +1108,7 @@ function renderHome(){
 function emptyStateHtml(){
   return `<div class="empty-state">
     <div>📋</div>
-    <p>Todavía no hay visitas registradas.<br>Pulsa el botón + para crear la primera ficha.</p>
+    <p>Todavía no hay visitas registradas.<br>Ve a "Nueva ficha" para crear la primera.</p>
   </div>`;
 }
 
@@ -890,15 +1129,73 @@ function visitaRowHtml(v){
 }
 
 /* ---------------------------------------------------------------------- */
+/* Vista: Ajustes (Configuración)                                          */
+/* ---------------------------------------------------------------------- */
+function renderAjustes(){
+  const profile = loadProfile();
+  const inClaudePreview = !!window.claude;
+  el.innerHTML = `
+    ${cabeceraHtml("Ajustes", "Seguimiento DAO", {mode:"inicio"})}
+    <div class="container" style="padding-top:16px;">
+      <div class="menu-section-title">Observador</div>
+      <div class="card">
+        <div class="field" style="margin-bottom:0;">
+          <label class="field-label">Técnico DAO por defecto</label>
+          <input type="text" id="aj-tecnico" value="${escapeHtml(profile.tecnico||"")}" placeholder="Nombre y apellidos">
+        </div>
+        <p class="small muted" style="margin:8px 0 0;">Se usará como técnico DAO al crear una nueva ficha.</p>
+      </div>
+
+      <div class="menu-section-title">Cuenta de Google</div>
+      <div class="card">
+        ${inClaudePreview && !STATE.user ? `<div class="alert-box" style="background:var(--head-bg);color:var(--ink-muted);">Vista previa dentro de Claude: el inicio de sesión de Google y la sincronización no funcionan aquí (Claude no permite llamadas a los servidores de Google). El resto de la app funciona igual. Pruébalo con tu cuenta de Google en la versión publicada en GitHub Pages.</div>` : ""}
+        ${STATE.user ? `
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+            ${STATE.user.picture ? `<img src="${STATE.user.picture}" style="width:38px;height:38px;border-radius:50%;">` : ""}
+            <div>
+              <div style="font-weight:700;font-size:13.5px;">${escapeHtml(STATE.user.name||"")}</div>
+              <div class="small muted">${escapeHtml(STATE.user.email||"")}</div>
+            </div>
+          </div>
+          <button class="btn btn-secondary" id="btn-logout">Cerrar sesión</button>
+        ` : `
+          <p class="muted small">No has iniciado sesión con Google. Las fichas solo se guardan en este móvil.</p>
+          <button class="btn btn-primary" id="btn-login2">Continuar con Google</button>
+        `}
+      </div>
+
+      <div class="menu-section-title">Datos compartidos del equipo</div>
+      <div class="card">
+        <p class="small muted">Hoja de cálculo y carpetas de Drive de esta obra (pide acceso de edición a quien las creó si aún no lo tienes).</p>
+        <a class="btn btn-outline" style="margin-bottom:8px;text-decoration:none;" href="https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/edit" target="_blank">Abrir hoja de cálculo</a>
+        <a class="btn btn-outline" style="margin-bottom:8px;text-decoration:none;" href="https://drive.google.com/drive/folders/${CONFIG.FOTOS_FOLDER_ID}" target="_blank">Abrir carpeta de fotos</a>
+        <a class="btn btn-outline" style="text-decoration:none;" href="https://drive.google.com/drive/folders/${CONFIG.ACTAS_FOLDER_ID}" target="_blank">Abrir carpeta de actas (Word)</a>
+      </div>
+    </div>
+  `;
+  wireCabecera();
+  $("#aj-tecnico").addEventListener("input", e => {
+    const p = loadProfile();
+    p.tecnico = e.target.value;
+    saveProfile(p);
+  });
+  const logoutBtn = $("#btn-logout");
+  if(logoutBtn) logoutBtn.addEventListener("click", () => {
+    STATE.user = null; STATE.accessToken = null; STATE.tokenExpiry = 0;
+    toast("Sesión cerrada.");
+    goto("ajustes");
+  });
+  const loginBtn2 = $("#btn-login2");
+  if(loginBtn2) loginBtn2.addEventListener("click", async () => { await googleSignIn(); goto("ajustes"); });
+}
+
+/* ---------------------------------------------------------------------- */
 /* Vista: Datos generales + fase                                           */
 /* ---------------------------------------------------------------------- */
 function renderDatos(){
   const v = STATE.current;
   el.innerHTML = `
-    <div class="topbar">
-      <button class="back" id="btn-back">←</button>
-      <h1>Nueva visita · ficha n.º ${String(v.nVisita).padStart(2,"0")}<span class="sub">${escapeHtml(CONFIG.PROYECTO)}</span></h1>
-    </div>
+    ${cabeceraHtml(`Nueva visita · ficha n.º ${String(v.nVisita).padStart(2,"0")}`, escapeHtml(CONFIG.PROYECTO), {mode:"menu"})}
     <div class="container">
       <div class="card">
         <div class="field">
@@ -927,7 +1224,7 @@ function renderDatos(){
       <button class="btn btn-primary" id="btn-continuar">Continuar →</button>
     </div>
   `;
-  $("#btn-back").addEventListener("click", () => { persistCurrent(); goto("home"); });
+  wireCabecera();
   $("#f-fecha").addEventListener("input", e => v.fecha = e.target.value);
   $("#f-tecnico").addEventListener("input", e => { v.tecnico = e.target.value; });
   $("#f-condiciones").addEventListener("input", e => v.condiciones = e.target.value);
@@ -950,10 +1247,7 @@ function renderApartados(){
   const v = STATE.current;
   const faseLabel = v.fase === "previa" ? "fase previa a construcción" : "fase de construcción";
   el.innerHTML = `
-    <div class="topbar">
-      <button class="back" id="btn-back">←</button>
-      <h1>Apartados de esta visita<span class="sub">Marca los que aplican en ${escapeHtml(faseLabel)}</span></h1>
-    </div>
+    ${cabeceraHtml("Apartados de esta visita", `Marca los que aplican en ${escapeHtml(faseLabel)}`, {mode:"menu", back:true})}
     <div class="container">
       <div id="temas-list">
         ${TEMAS_DATA.map(t => {
@@ -976,6 +1270,7 @@ function renderApartados(){
       <button class="btn btn-primary" id="btn-continuar">Rellenar fichas →</button>
     </div>
   `;
+  wireCabecera();
   $("#btn-back").addEventListener("click", () => { persistCurrent(); goto("datos"); });
   $$("#temas-list input[type=checkbox]").forEach(cb => {
     cb.addEventListener("change", () => {
@@ -1007,10 +1302,7 @@ function renderChecklist(){
   const isLast = STATE.temaFlowIdx === STATE.temaFlowOrder.length - 1;
 
   el.innerHTML = `
-    <div class="topbar">
-      <button class="back" id="btn-back">←</button>
-      <h1>${num}. ${escapeHtml(temaData.nombre)}<span class="sub">Tema ${STATE.temaFlowIdx+1} de ${STATE.temaFlowOrder.length} aplicables</span></h1>
-    </div>
+    ${cabeceraHtml(`${num}. ${escapeHtml(temaData.nombre)}`, `Tema ${STATE.temaFlowIdx+1} de ${STATE.temaFlowOrder.length} aplicables`, {mode:"menu", back:true})}
     <div class="progress-dots">
       ${STATE.temaFlowOrder.map((n,i)=>`<span class="${i===STATE.temaFlowIdx?'on':''}"></span>`).join("")}
     </div>
@@ -1024,6 +1316,7 @@ function renderChecklist(){
     <input type="file" id="photo-input" accept="image/*" capture="environment" class="hidden">
   `;
 
+  wireCabecera();
   $("#btn-back").addEventListener("click", () => { persistCurrent(); goto("apartados"); });
   $("#btn-prev").addEventListener("click", () => {
     persistCurrent();
@@ -1114,7 +1407,11 @@ function wireItemRows(visita, num){
     try{
       const dataUrl = await resizeImageFile(file, CONFIG.FOTO_MAX_LADO, CONFIG.FOTO_CALIDAD);
       byId[targetCodigo].fotos = byId[targetCodigo].fotos || [];
-      byId[targetCodigo].fotos.push({ dataUrl, name: `foto_${targetCodigo}_${Date.now()}.jpg` });
+      // Nombre claro: nº de visita, fecha y código de medida (más un índice si hay varias fotos de la misma medida)
+      const idxFoto = byId[targetCodigo].fotos.length + 1;
+      const fechaCompacta = (visita.fecha||"").replace(/-/g,"");
+      const name = `V${String(visita.nVisita).padStart(2,"0")}_${fechaCompacta}_${targetCodigo}_${idxFoto}.jpg`;
+      byId[targetCodigo].fotos.push({ dataUrl, name });
       STATE.expanded[targetCodigo] = true;
       renderChecklist();
     }catch(e){ toast("No se ha podido procesar la foto."); }
@@ -1163,10 +1460,7 @@ function renderRevision(){
   const c = countCountsForVisita(v);
   const issues = pendingIssues(v);
   el.innerHTML = `
-    <div class="topbar">
-      <button class="back" id="btn-back">←</button>
-      <h1>Revisión final<span class="sub">Ficha n.º ${String(v.nVisita).padStart(2,"0")} · ${fmtFechaEs(v.fecha)}</span></h1>
-    </div>
+    ${cabeceraHtml("Revisión final", `Ficha n.º ${String(v.nVisita).padStart(2,"0")} · ${fmtFechaEs(v.fecha)}`, {mode:"menu", back:true})}
     <div class="container">
       <div class="stats-row">
         <div class="s"><div class="n">${c.apartados}</div><div class="l">apartados</div></div>
@@ -1200,11 +1494,12 @@ function renderRevision(){
       <button class="btn btn-secondary" id="btn-borrador">Guardar borrador y salir</button>
     </div>
   `;
+  wireCabecera();
   $("#btn-back").addEventListener("click", () => { persistCurrent(); STATE.temaFlowIdx = STATE.temaFlowOrder.length-1; goto("checklist"); });
   $("#f-obsg").addEventListener("input", e => v.obsGenerales = e.target.value);
   $("#f-firma-tecnico").addEventListener("input", e => v.firmaTecnico = e.target.value);
   $("#f-firma-contratista").addEventListener("input", e => v.firmaContratista = e.target.value);
-  $("#btn-borrador").addEventListener("click", () => { persistCurrent(); goto("home"); });
+  $("#btn-borrador").addEventListener("click", () => { persistCurrent(); goto("menu-fichas"); });
   $("#btn-word").addEventListener("click", () => {
     persistCurrent();
     const remaining = pendingIssues(v);
@@ -1218,50 +1513,6 @@ function renderRevision(){
     if(!STATE.user){ await googleSignIn(); if(!STATE.user) return; }
     syncVisita(v);
   });
-}
-
-/* ---------------------------------------------------------------------- */
-/* Vista: Ajustes                                                          */
-/* ---------------------------------------------------------------------- */
-function renderSettings(){
-  el.innerHTML = `
-    <div class="topbar">
-      <button class="back" id="btn-back">←</button>
-      <h1>Ajustes</h1>
-    </div>
-    <div class="container">
-      <div class="card">
-        ${STATE.user ? `
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
-            ${STATE.user.picture ? `<img src="${STATE.user.picture}" style="width:38px;height:38px;border-radius:50%;">` : ""}
-            <div>
-              <div style="font-weight:700;font-size:13.5px;">${escapeHtml(STATE.user.name||"")}</div>
-              <div class="small muted">${escapeHtml(STATE.user.email||"")}</div>
-            </div>
-          </div>
-          <button class="btn btn-secondary" id="btn-logout">Cerrar sesión</button>
-        ` : `
-          <p class="muted small">No has iniciado sesión con Google. Las fichas solo se guardan en este móvil.</p>
-          <button class="btn btn-primary" id="btn-login2">Continuar con Google</button>
-        `}
-      </div>
-      <div class="card">
-        <div class="field-label">Datos compartidos del equipo</div>
-        <p class="small muted">Hoja de cálculo y carpeta de fotos de esta obra (pide acceso de edición a quien las creó si aún no lo tienes).</p>
-        <a class="btn btn-outline" style="margin-bottom:8px;text-decoration:none;" href="https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/edit" target="_blank">Abrir hoja de cálculo</a>
-        <a class="btn btn-outline" style="text-decoration:none;" href="https://drive.google.com/drive/folders/${CONFIG.DRIVE_FOLDER_ID}" target="_blank">Abrir carpeta de fotos</a>
-      </div>
-    </div>
-  `;
-  $("#btn-back").addEventListener("click", () => goto("home"));
-  const logoutBtn = $("#btn-logout");
-  if(logoutBtn) logoutBtn.addEventListener("click", () => {
-    STATE.user = null; STATE.accessToken = null; STATE.tokenExpiry = 0;
-    toast("Sesión cerrada.");
-    goto("home");
-  });
-  const loginBtn2 = $("#btn-login2");
-  if(loginBtn2) loginBtn2.addEventListener("click", googleSignIn);
 }
 
 /* ---------------------------------------------------------------------- */
